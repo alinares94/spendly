@@ -66,7 +66,7 @@
     <app-loading-spinner />
   } @else if (transactions().length === 0) {
     <app-empty-state
-      icon="💳"
+      [icon]="X"
       title="Sin movimientos"
       message="No hay movimientos para este período. Crea el primero."
       actionLabel="Nuevo movimiento"

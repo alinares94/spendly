@@ -16,7 +16,7 @@
     <app-loading-spinner />
   } @else if (items().length === 0) {
     <app-empty-state
-      icon="🔁"
+      [icon]="X"
       title="Sin recurrentes"
       message="Añade tus gastos e ingresos fijos para tener una visión clara de tus finanzas."
       actionLabel="Nuevo recurrente"

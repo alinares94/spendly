@@ -7,7 +7,7 @@ import {
   computed,
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { LucideAngularModule, LucideIconData, CreditCard, Plus, Pencil, Trash2, ArrowDownLeft, ArrowUpRight } from 'lucide-angular';
+import { LucideAngularModule, LucideIconData, CreditCard, Plus, Pencil, Trash2, ArrowDownLeft, ArrowUpRight, X } from 'lucide-angular';
 import { TransactionService } from '@core/services/transaction.service';
 import { CategoryService } from '@core/services/category.service';
 import { Transaction, TransactionType } from '@core/models/transaction.model';
@@ -43,6 +43,7 @@ export class TransactionsListComponent implements OnInit {
   readonly Trash2 = Trash2;
   readonly ArrowDownLeft = ArrowDownLeft;
   readonly ArrowUpRight = ArrowUpRight;
+  readonly X = X;
 
   transactionService = inject(TransactionService);
   private categoryService = inject(CategoryService);

@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
-import { LucideAngularModule, RefreshCw, Plus, Pencil, Trash2 } from 'lucide-angular';
+import { LucideAngularModule, RefreshCw, Plus, Pencil, Trash2, X } from 'lucide-angular';
 import { RecurringService } from '@core/services/recurring.service';
 import { RecurringTransaction } from '@core/models/recurring-transaction.model';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
@@ -35,6 +35,7 @@ export class RecurringListComponent implements OnInit {
   readonly Plus = Plus;
   readonly Pencil = Pencil;
   readonly Trash2 = Trash2;
+  readonly X = X;
 
   private recurringService = inject(RecurringService);
 
