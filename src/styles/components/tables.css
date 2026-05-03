@@ -1,0 +1,40 @@
+@layer components {
+  .table-wrapper {
+    @apply overflow-x-auto rounded-xl border border-[var(--color-border)];
+  }
+
+  .table-base {
+    @apply w-full text-sm text-left border-collapse;
+  }
+
+  .table-base thead {
+    @apply bg-[var(--color-bg-secondary)];
+  }
+
+  .table-base thead th {
+    @apply px-4 py-3 font-medium text-[var(--color-text-muted)]
+           uppercase text-xs tracking-wide whitespace-nowrap;
+  }
+
+  .table-base tbody tr {
+    @apply border-t border-[var(--color-border)]
+           hover:bg-[var(--color-bg-secondary)] transition-colors duration-100;
+  }
+
+  .table-base tbody td {
+    @apply px-4 py-3 text-[var(--color-text-primary)];
+  }
+
+  .table-base tfoot td {
+    @apply px-4 py-3 font-semibold border-t border-[var(--color-border)]
+           bg-[var(--color-bg-secondary)];
+  }
+
+  .amount-income {
+    @apply text-[var(--color-income)] font-medium tabular-nums;
+  }
+
+  .amount-expense {
+    @apply text-[var(--color-expense)] font-medium tabular-nums;
+  }
+}

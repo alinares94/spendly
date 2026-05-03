@@ -1,0 +1,169 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold">Movimientos</h1>
+      <p class="text-sm text-[var(--color-text-muted)] mt-0.5">Registro de ingresos y gastos</p>
+    </div>
+    <button class="btn-primary" (click)="openCreate()">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Nuevo movimiento
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap items-center gap-3">
+    <app-month-picker
+      [value]="transactionService.selectedMonth()"
+      (valueChange)="onMonthChange($event)"
+    />
+
+    <select class="input w-auto" (change)="onTypeFilter($event)">
+      <option value="">Todos los tipos</option>
+      <option value="income">Ingresos</option>
+      <option value="expense">Gastos</option>
+    </select>
+
+    <select class="input w-auto" (change)="onCategoryFilter($event)">
+      <option value="">Todas las categorías</option>
+      @for (cat of categories(); track cat.id) {
+        <option [value]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Summary bar -->
+  @if (!isLoading() && transactions().length > 0) {
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div class="card-sm text-center">
+        <p class="stat-label">Ingresos</p>
+        <p class="stat-value text-[var(--color-income)] text-lg">
+          +{{ totalIncome() | currency:'EUR':'symbol':'1.2-2':'es' }}
+        </p>
+      </div>
+      <div class="card-sm text-center">
+        <p class="stat-label">Gastos</p>
+        <p class="stat-value text-[var(--color-expense)] text-lg">
+          -{{ totalExpenses() | currency:'EUR':'symbol':'1.2-2':'es' }}
+        </p>
+      </div>
+      <div class="card-sm text-center col-span-2 sm:col-span-1">
+        <p class="stat-label">Balance</p>
+        <p
+          class="stat-value text-lg"
+          [class.text-[var(--color-income)]]="totalIncome() - totalExpenses() >= 0"
+          [class.text-[var(--color-expense)]]="totalIncome() - totalExpenses() < 0"
+        >
+          {{ totalIncome() - totalExpenses() | currency:'EUR':'symbol':'1.2-2':'es' }}
+        </p>
+      </div>
+    </div>
+  }
+
+  @if (isLoading()) {
+    <app-loading-spinner />
+  } @else if (transactions().length === 0) {
+    <app-empty-state
+      icon="💳"
+      title="Sin movimientos"
+      message="No hay movimientos para este período. Crea el primero."
+      actionLabel="Nuevo movimiento"
+      (action)="openCreate()"
+    />
+  } @else {
+    <!-- Desktop table -->
+    <div class="hidden sm:block table-wrapper">
+      <table class="table-base">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Categoría</th>
+            <th>Tipo</th>
+            <th class="text-right">Importe</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tx of transactions(); track tx.id) {
+            <tr>
+              <td class="whitespace-nowrap text-[var(--color-text-muted)] text-xs">
+                {{ tx.date | date:'dd/MM/yyyy' }}
+              </td>
+              <td class="max-w-[200px] truncate">
+                {{ tx.description ?? '—' }}
+              </td>
+              <td>
+                <app-category-badge [category]="tx.category" />
+              </td>
+              <td>
+                <span [class]="tx.type === 'income' ? 'badge-income' : 'badge-expense'">
+                  {{ tx.type === 'income' ? 'Ingreso' : 'Gasto' }}
+                </span>
+              </td>
+              <td class="text-right">
+                <span [class]="tx.type === 'income' ? 'amount-income' : 'amount-expense'">
+                  {{ tx.type === 'income' ? '+' : '-' }}{{ tx.amount | currency:'EUR':'symbol':'1.2-2':'es' }}
+                </span>
+              </td>
+              <td class="text-right whitespace-nowrap">
+                <button class="btn-ghost btn-sm" (click)="openEdit(tx)">Editar</button>
+                <button class="btn-ghost btn-sm text-[var(--color-danger)]" (click)="openDelete(tx)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile cards -->
+    <div class="sm:hidden space-y-2">
+      @for (tx of transactions(); track tx.id) {
+        <div class="card-sm flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0"
+            [style.background-color]="tx.category?.color ? tx.category!.color + '20' : 'var(--color-bg-secondary)'"
+          >
+            {{ tx.category?.icon ?? (tx.type === 'income' ? '💰' : '💸') }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium truncate">
+              {{ tx.description ?? tx.category?.name ?? '—' }}
+            </p>
+            <p class="text-xs text-[var(--color-text-muted)]">
+              {{ tx.date | date:'dd/MM/yyyy' }}
+            </p>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <p [class]="tx.type === 'income' ? 'amount-income' : 'amount-expense'" class="text-sm">
+              {{ tx.type === 'income' ? '+' : '-' }}{{ tx.amount | currency:'EUR':'symbol':'1.2-2':'es' }}
+            </p>
+            <div class="flex gap-1 mt-1 justify-end">
+              <button class="btn-ghost btn-sm py-0.5 px-1.5 text-xs" (click)="openEdit(tx)">✏️</button>
+              <button class="btn-ghost btn-sm py-0.5 px-1.5 text-xs" (click)="openDelete(tx)">🗑️</button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<app-transaction-form
+  [visible]="showForm()"
+  [editingTransaction]="editingTransaction()"
+  (close)="showForm.set(false)"
+  (saved)="loadTransactions()"
+/>
+
+<app-confirm-dialog
+  [visible]="showDeleteDialog()"
+  title="Eliminar movimiento"
+  message="¿Seguro que quieres eliminar este movimiento? Esta acción no se puede deshacer."
+  (confirm)="confirmDelete()"
+  (cancel)="showDeleteDialog.set(false)"
+/>

@@ -1,0 +1,47 @@
+@layer components {
+  .card {
+    @apply bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6;
+  }
+
+  .card-sm {
+    @apply card p-4;
+  }
+
+  .card-elevated {
+    @apply card shadow-sm;
+  }
+
+  .card-interactive {
+    @apply card cursor-pointer
+           hover:border-[var(--color-primary)] hover:shadow-sm
+           transition-all duration-150;
+  }
+
+  .card-header {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .card-title {
+    @apply text-base font-semibold text-[var(--color-text-primary)];
+  }
+
+  .card-subtitle {
+    @apply text-sm text-[var(--color-text-muted)] mt-0.5;
+  }
+
+  .stat-value {
+    @apply text-2xl font-bold tabular-nums;
+  }
+
+  .stat-label {
+    @apply text-sm text-[var(--color-text-muted)];
+  }
+
+  .stat-trend-up {
+    @apply text-xs text-[var(--color-income)] flex items-center gap-0.5;
+  }
+
+  .stat-trend-down {
+    @apply text-xs text-[var(--color-expense)] flex items-center gap-0.5;
+  }
+}

@@ -1,0 +1,185 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold">Dashboard</h1>
+      <p class="text-sm text-[var(--color-text-muted)] mt-0.5">Resumen de tus finanzas</p>
+    </div>
+    <app-month-picker
+      [value]="selectedMonth()"
+      (valueChange)="onMonthChange($event)"
+    />
+  </div>
+
+  @if (isLoading()) {
+    <app-loading-spinner />
+  } @else {
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <app-stat-card
+        label="Ingresos"
+        [amount]="totalIncome()"
+        icon="💰"
+        colorType="income"
+      />
+      <app-stat-card
+        label="Gastos"
+        [amount]="totalExpenses()"
+        icon="💸"
+        colorType="expense"
+      />
+      <app-stat-card
+        label="Balance"
+        [amount]="balance()"
+        [icon]="balance() >= 0 ? '📈' : '📉'"
+        [colorType]="balance() >= 0 ? 'income' : 'expense'"
+      />
+    </div>
+
+    <!-- Charts row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- Gastos por categoría -->
+      <div class="card-elevated">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Gastos por categoría</h2>
+            <p class="card-subtitle">{{ selectedMonth() | date:'MMMM yyyy':'':'es' }}</p>
+          </div>
+        </div>
+        @if (expensesByCategory().length === 0) {
+          <div class="flex flex-col items-center justify-center py-10 text-[var(--color-text-muted)]">
+            <span class="text-4xl mb-2">🍩</span>
+            <span class="text-sm">Sin gastos este mes</span>
+          </div>
+        } @else {
+          <apx-chart
+            [series]="pieChartOptions().series!"
+            [chart]="pieChartOptions().chart!"
+            [labels]="pieChartOptions().labels!"
+            [legend]="pieChartOptions().legend!"
+            [theme]="pieChartOptions().theme!"
+            [tooltip]="pieChartOptions().tooltip!"
+            [dataLabels]="pieChartOptions().dataLabels!"
+            [responsive]="pieChartOptions().responsive!"
+          />
+        }
+      </div>
+
+      <!-- Ingresos vs Gastos (6 meses) -->
+      <div class="card-elevated">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Ingresos vs Gastos</h2>
+            <p class="card-subtitle">Últimos 6 meses</p>
+          </div>
+        </div>
+        <apx-chart
+          [series]="barChartOptions().series!"
+          [chart]="barChartOptions().chart!"
+          [xaxis]="barChartOptions().xaxis!"
+          [colors]="barChartOptions().colors!"
+          [legend]="barChartOptions().legend!"
+          [theme]="barChartOptions().theme!"
+          [tooltip]="barChartOptions().tooltip!"
+          [plotOptions]="barChartOptions().plotOptions!"
+          [dataLabels]="barChartOptions().dataLabels!"
+        />
+      </div>
+    </div>
+
+    <!-- Presupuestos del mes -->
+    @if (budgets().length > 0) {
+      <div class="card-elevated">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Presupuestos</h2>
+            <p class="card-subtitle">Progreso del mes actual</p>
+          </div>
+          <a href="/budgets" class="btn-ghost btn-sm text-xs">Ver todos →</a>
+        </div>
+        <div class="space-y-4">
+          @for (budget of budgets(); track budget.id) {
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-sm">
+                <div class="flex items-center gap-2">
+                  @if (budget.category?.icon) {
+                    <span>{{ budget.category!.icon }}</span>
+                  }
+                  <span class="font-medium">{{ budget.category?.name ?? 'Sin categoría' }}</span>
+                </div>
+                <span class="text-[var(--color-text-muted)]">
+                  {{ budget.spent_amount! | currency:'EUR':'symbol':'1.2-2':'es' }}
+                  /
+                  {{ budget.limit_amount | currency:'EUR':'symbol':'1.2-2':'es' }}
+                </span>
+              </div>
+              <div class="progress-bar-track">
+                <div
+                  class="progress-bar-fill"
+                  [class.progress-bar-ok]="budget.usage_percentage! <= 70"
+                  [class.progress-bar-warning]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
+                  [class.progress-bar-danger]="budget.usage_percentage! > 90"
+                  [style.width.%]="budget.usage_percentage"
+                ></div>
+              </div>
+              <div class="flex justify-end">
+                <span
+                  class="text-xs"
+                  [class.text-[var(--color-text-muted)]]="budget.usage_percentage! <= 70"
+                  [class.text-[var(--color-warning)]]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
+                  [class.text-[var(--color-danger)]]="budget.usage_percentage! > 90"
+                >
+                  {{ budget.usage_percentage }}%
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Últimos movimientos -->
+    <div class="card-elevated">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Últimos movimientos</h2>
+          <p class="card-subtitle">Actividad reciente</p>
+        </div>
+        <a href="/transactions" class="btn-ghost btn-sm text-xs">Ver todos →</a>
+      </div>
+      @if (transactions().length === 0) {
+        <p class="text-sm text-[var(--color-text-muted)] text-center py-6">
+          No hay movimientos este mes
+        </p>
+      } @else {
+        <div class="space-y-2">
+          @for (tx of transactions().slice(0, 5); track tx.id) {
+            <div class="flex items-center gap-3 py-2 border-b border-[var(--color-border)] last:border-0">
+              <div
+                class="w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0"
+                [style.background-color]="tx.category?.color ? tx.category!.color + '20' : 'var(--color-bg-secondary)'"
+              >
+                {{ tx.category?.icon ?? (tx.type === 'income' ? '💰' : '💸') }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium truncate">
+                  {{ tx.description ?? tx.category?.name ?? 'Sin descripción' }}
+                </p>
+                <p class="text-xs text-[var(--color-text-muted)]">
+                  {{ tx.date | date:'dd MMM yyyy':'':'es' }}
+                </p>
+              </div>
+              <span
+                class="text-sm font-semibold tabular-nums flex-shrink-0"
+                [class.text-[var(--color-income)]]="tx.type === 'income'"
+                [class.text-[var(--color-expense)]]="tx.type === 'expense'"
+              >
+                {{ tx.type === 'income' ? '+' : '-' }}{{ tx.amount | currency:'EUR':'symbol':'1.2-2':'es' }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

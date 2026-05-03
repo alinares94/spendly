@@ -1,0 +1,43 @@
+@layer components {
+  .input {
+    @apply w-full px-3 py-2 rounded-lg text-sm
+           bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]
+           border border-[var(--color-border)]
+           placeholder:text-[var(--color-text-muted)]
+           focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent
+           transition-all duration-150;
+  }
+
+  .input-error {
+    @apply border-[var(--color-danger)] focus:ring-[var(--color-danger)];
+  }
+
+  select.input {
+    @apply cursor-pointer appearance-none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+  }
+
+  textarea.input {
+    @apply resize-y min-h-[80px];
+  }
+
+  .input-group {
+    @apply relative;
+  }
+
+  .input-group .input {
+    @apply pl-10;
+  }
+
+  .input-group-icon {
+    @apply absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none;
+  }
+
+  .input-group-suffix {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none text-sm;
+  }
+}

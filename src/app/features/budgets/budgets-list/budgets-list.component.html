@@ -1,0 +1,90 @@
+<div class="space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold">Presupuestos</h1>
+      <p class="text-sm text-[var(--color-text-muted)] mt-0.5">Controla el gasto por categoría</p>
+    </div>
+    <button class="btn-primary" (click)="openCreate()">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Nuevo presupuesto
+    </button>
+  </div>
+
+  <app-month-picker [value]="selectedMonth()" (valueChange)="onMonthChange($event)" />
+
+  @if (isLoading()) {
+    <app-loading-spinner />
+  } @else if (budgets().length === 0) {
+    <app-empty-state
+      icon="🎯"
+      title="Sin presupuestos"
+      message="Define límites de gasto por categoría para controlar mejor tu dinero."
+      actionLabel="Nuevo presupuesto"
+      (action)="openCreate()"
+    />
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (b of budgets(); track b.id) {
+        <div class="card-elevated space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              @if (b.category?.icon) {
+                <span class="text-xl">{{ b.category!.icon }}</span>
+              }
+              <span class="font-semibold">{{ b.category?.name ?? 'Sin categoría' }}</span>
+            </div>
+            <span
+              class="text-sm font-bold tabular-nums"
+              [class.text-[var(--color-danger)]]="(b.usage_percentage ?? 0) > 90"
+              [class.text-[var(--color-warning)]]="(b.usage_percentage ?? 0) > 70 && (b.usage_percentage ?? 0) <= 90"
+              [class.text-[var(--color-text-muted)]]="(b.usage_percentage ?? 0) <= 70"
+            >
+              {{ b.usage_percentage ?? 0 }}%
+            </span>
+          </div>
+
+          <div class="progress-bar-track">
+            <div
+              class="progress-bar-fill"
+              [class]="progressClass(b.usage_percentage)"
+              [style.width.%]="b.usage_percentage ?? 0"
+            ></div>
+          </div>
+
+          <div class="flex justify-between text-xs text-[var(--color-text-muted)]">
+            <span>Gastado: {{ b.spent_amount! | currency:'EUR':'symbol':'1.2-2':'es' }}</span>
+            <span>Límite: {{ b.limit_amount | currency:'EUR':'symbol':'1.2-2':'es' }}</span>
+          </div>
+
+          @if ((b.usage_percentage ?? 0) > 90) {
+            <p class="text-xs text-[var(--color-danger)] font-medium">
+              ⚠️ Presupuesto casi agotado
+            </p>
+          }
+
+          <div class="flex gap-2 pt-2 border-t border-[var(--color-border)]">
+            <button class="btn-ghost btn-sm flex-1 text-xs" (click)="openEdit(b)">Editar límite</button>
+            <button class="btn-ghost btn-sm text-[var(--color-danger)] text-xs" (click)="openDelete(b)">Eliminar</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<app-budget-form
+  [visible]="showForm()"
+  [editing]="editing()"
+  (close)="showForm.set(false)"
+  (saved)="load()"
+/>
+
+<app-confirm-dialog
+  [visible]="showDeleteDialog()"
+  title="Eliminar presupuesto"
+  message="¿Seguro que quieres eliminar este presupuesto?"
+  (confirm)="confirmDelete()"
+  (cancel)="showDeleteDialog.set(false)"
+/>

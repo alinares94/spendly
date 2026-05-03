@@ -1,0 +1,41 @@
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg
+           font-medium text-sm transition-all duration-150 cursor-pointer
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:pointer-events-none select-none;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs rounded-md;
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-base rounded-xl;
+  }
+
+  .btn-primary {
+    @apply btn bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)]
+           focus-visible:ring-[var(--color-primary)];
+  }
+
+  .btn-secondary {
+    @apply btn bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]
+           border border-[var(--color-border)]
+           hover:bg-[var(--color-border)];
+  }
+
+  .btn-danger {
+    @apply btn bg-[var(--color-danger)] text-white
+           hover:opacity-90 focus-visible:ring-[var(--color-danger)];
+  }
+
+  .btn-ghost {
+    @apply btn hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)]
+           hover:text-[var(--color-text-primary)];
+  }
+
+  .btn-success {
+    @apply btn bg-[var(--color-success)] text-white hover:opacity-90;
+  }
+}
