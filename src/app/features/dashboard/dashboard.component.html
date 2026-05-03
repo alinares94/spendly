@@ -17,21 +17,21 @@
     <!-- KPI Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <app-stat-card
-        label="Ingresos"
+        label="Ingresos del mes"
         [amount]="totalIncome()"
-        icon="💰"
+        [icon]="Wallet"
         colorType="income"
       />
       <app-stat-card
-        label="Gastos"
+        label="Gastos del mes"
         [amount]="totalExpenses()"
-        icon="💸"
+        [icon]="TrendingDown"
         colorType="expense"
       />
       <app-stat-card
         label="Balance"
         [amount]="balance()"
-        [icon]="balance() >= 0 ? '📈' : '📉'"
+        [icon]="balance() >= 0 ? TrendingUp : TrendingDown"
         [colorType]="balance() >= 0 ? 'income' : 'expense'"
       />
     </div>

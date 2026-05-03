@@ -30,14 +30,7 @@
               }
             ],
             "styles": [
-              "src/styles/base.css",
-              "src/styles/components/buttons.css",
-              "src/styles/components/inputs.css",
-              "src/styles/components/forms.css",
-              "src/styles/components/cards.css",
-              "src/styles/components/tables.css",
-              "src/styles/components/badges.css",
-              "src/styles/layouts/sidebar.css"
+              "src/styles/base.css"
             ],
             "scripts": []
           },
@@ -101,14 +94,7 @@
               }
             ],
             "styles": [
-              "src/styles/base.css",
-              "src/styles/components/buttons.css",
-              "src/styles/components/inputs.css",
-              "src/styles/components/forms.css",
-              "src/styles/components/cards.css",
-              "src/styles/components/tables.css",
-              "src/styles/components/badges.css",
-              "src/styles/layouts/sidebar.css"
+              "src/styles/base.css"
             ],
             "scripts": []
           }

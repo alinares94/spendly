@@ -6,6 +6,7 @@ import {
   signal,
   computed,
 } from '@angular/core';
+import { LucideAngularModule, LucideIconData, Tag, Plus, Pencil, Trash2, X } from 'lucide-angular';
 import { CategoryService } from '@core/services/category.service';
 import { Category } from '@core/models/category.model';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
@@ -21,11 +22,18 @@ import { CategoryFormComponent } from '../category-form/category-form.component'
     EmptyStateComponent,
     ConfirmDialogComponent,
     CategoryFormComponent,
+    LucideAngularModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './categories-list.component.html',
 })
 export class CategoriesListComponent implements OnInit {
+  readonly Tag = Tag;
+  readonly Plus = Plus;
+  readonly Pencil = Pencil;
+  readonly Trash2 = Trash2;
+  readonly X = X;
+
   private categoryService = inject(CategoryService);
 
   isLoading = signal(true);

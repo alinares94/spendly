@@ -6,6 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { LucideAngularModule, RefreshCw, Plus, Pencil, Trash2 } from 'lucide-angular';
 import { RecurringService } from '@core/services/recurring.service';
 import { RecurringTransaction } from '@core/models/recurring-transaction.model';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
@@ -23,12 +24,18 @@ import { RecurringFormComponent } from '../recurring-form/recurring-form.compone
     CategoryBadgeComponent,
     ConfirmDialogComponent,
     RecurringFormComponent,
+    LucideAngularModule,
     CurrencyPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './recurring-list.component.html',
 })
 export class RecurringListComponent implements OnInit {
+  readonly RefreshCw = RefreshCw;
+  readonly Plus = Plus;
+  readonly Pencil = Pencil;
+  readonly Trash2 = Trash2;
+
   private recurringService = inject(RecurringService);
 
   isLoading = signal(true);

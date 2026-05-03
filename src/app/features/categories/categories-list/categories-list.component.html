@@ -16,7 +16,7 @@
     <app-loading-spinner />
   } @else if (categories().length === 0) {
     <app-empty-state
-      icon="🏷️"
+      [icon]="X"
       title="Sin categorías"
       message="Crea categorías para organizar mejor tus movimientos."
       actionLabel="Nueva categoría"

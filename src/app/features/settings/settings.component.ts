@@ -1,24 +1,26 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  OnInit,
   inject,
   signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LucideAngularModule, Sun, Moon, CheckCircle } from 'lucide-angular';
 import { AuthService } from '@core/services/auth.service';
 import { SupabaseService } from '@core/services/supabase.service';
 import { ThemeService } from '@core/services/theme.service';
-import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
-
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [ReactiveFormsModule, LoadingSpinnerComponent],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings.component.html',
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent {
+  readonly Sun = Sun;
+  readonly Moon = Moon;
+  readonly CheckCircle = CheckCircle;
+
   private auth = inject(AuthService);
   private supabase = inject(SupabaseService);
   themeService = inject(ThemeService);
@@ -35,8 +37,6 @@ export class SettingsComponent implements OnInit {
   get userEmail() {
     return this.auth.currentUser()?.email ?? '';
   }
-
-  async ngOnInit() {}
 
   async onChangePassword() {
     const { newPassword, confirmPassword } = this.passwordForm.value;

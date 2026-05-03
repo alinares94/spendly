@@ -9,33 +9,30 @@ export class AuthService {
   private router = inject(Router);
 
   readonly session = signal<Session | null>(null);
+  readonly sessionLoaded = signal(false);
   readonly isAuthenticated = computed(() => this.session() !== null);
   readonly currentUser = computed<User | null>(() => this.session()?.user ?? null);
 
   constructor() {
     this.supabase.client.auth.getSession().then(({ data }) => {
       this.session.set(data.session);
+      this.sessionLoaded.set(true);
     });
 
     this.supabase.client.auth.onAuthStateChange((_event, session) => {
       this.session.set(session);
+      this.sessionLoaded.set(true);
     });
   }
 
   async signIn(email: string, password: string) {
-    const { data, error } = await this.supabase.client.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } = await this.supabase.client.auth.signInWithPassword({ email, password });
     if (error) throw error;
     return data;
   }
 
   async signUp(email: string, password: string) {
-    const { data, error } = await this.supabase.client.auth.signUp({
-      email,
-      password,
-    });
+    const { data, error } = await this.supabase.client.auth.signUp({ email, password });
     if (error) throw error;
     return data;
   }

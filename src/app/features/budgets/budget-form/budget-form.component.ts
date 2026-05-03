@@ -8,6 +8,7 @@ import {
   output,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LucideAngularModule, X } from 'lucide-angular';
 import { BudgetService } from '@core/services/budget.service';
 import { CategoryService } from '@core/services/category.service';
 import { Budget, CreateBudgetDto } from '@core/models/budget.model';
@@ -16,7 +17,7 @@ import { Category } from '@core/models/category.model';
 @Component({
   selector: 'app-budget-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
@@ -25,7 +26,9 @@ import { Category } from '@core/models/category.model';
         <div class="card w-full max-w-md" (click)="$event.stopPropagation()">
           <div class="card-header">
             <h2 class="card-title">{{ editing() ? 'Editar presupuesto' : 'Nuevo presupuesto' }}</h2>
-            <button class="btn-ghost btn-sm p-1" (click)="close.emit()">✕</button>
+            <button class="btn-ghost btn-sm p-1" (click)="close.emit()">
+              <lucide-angular [img]="X" class="w-4 h-4" />
+            </button>
           </div>
 
           @if (errorMessage()) {
@@ -91,6 +94,8 @@ export class BudgetFormComponent implements OnInit {
   editing = input<Budget | null>(null);
   close = output<void>();
   saved = output<void>();
+
+  readonly X = X;
 
   private budgetService = inject(BudgetService);
   private categoryService = inject(CategoryService);

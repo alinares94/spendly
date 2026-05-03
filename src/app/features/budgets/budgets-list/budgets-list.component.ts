@@ -6,6 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { LucideAngularModule, Target, TriangleAlert, Plus, X } from 'lucide-angular';
 import { BudgetService } from '@core/services/budget.service';
 import { Budget } from '@core/models/budget.model';
 import { MonthPickerComponent } from '@shared/components/month-picker/month-picker.component';
@@ -23,12 +24,18 @@ import { BudgetFormComponent } from '../budget-form/budget-form.component';
     EmptyStateComponent,
     ConfirmDialogComponent,
     BudgetFormComponent,
+    LucideAngularModule,
     CurrencyPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './budgets-list.component.html',
 })
 export class BudgetsListComponent implements OnInit {
+  readonly Target = Target;
+  readonly TriangleAlert = TriangleAlert;
+  readonly Plus = Plus;
+  readonly X = X;
+
   private budgetService = inject(BudgetService);
 
   selectedMonth = signal<string>(new Date().toISOString().slice(0, 7));

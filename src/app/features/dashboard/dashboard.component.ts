@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { LucideAngularModule, Wallet, TrendingDown, TrendingUp, Scale, ChartPie, ArrowDownLeft, ArrowUpRight } from 'lucide-angular';
 import type {
   ApexAxisChartSeries,
   ApexNonAxisChartSeries,
@@ -49,6 +50,7 @@ export interface ChartOptions {
   standalone: true,
   imports: [
     NgApexchartsModule,
+    LucideAngularModule,
     StatCardComponent,
     MonthPickerComponent,
     LoadingSpinnerComponent,
@@ -62,6 +64,14 @@ export class DashboardComponent implements OnInit {
   private transactionService = inject(TransactionService);
   private budgetService = inject(BudgetService);
   themeService = inject(ThemeService);
+
+  readonly Wallet = Wallet;
+  readonly TrendingDown = TrendingDown;
+  readonly TrendingUp = TrendingUp;
+  readonly Scale = Scale;
+  readonly ChartPie = ChartPie;
+  readonly ArrowDownLeft = ArrowDownLeft;
+  readonly ArrowUpRight = ArrowUpRight;
 
   isLoading = signal(true);
   transactions = signal<Transaction[]>([]);

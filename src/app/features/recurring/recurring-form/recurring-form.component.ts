@@ -13,6 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { LucideAngularModule, X, TrendingDown, TrendingUp } from 'lucide-angular';
 import { RecurringService } from '@core/services/recurring.service';
 import { CategoryService } from '@core/services/category.service';
 import {
@@ -26,7 +27,7 @@ import { Category } from '@core/models/category.model';
 @Component({
   selector: 'app-recurring-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
@@ -42,7 +43,9 @@ import { Category } from '@core/models/category.model';
             <h2 class="card-title">
               {{ editing() ? 'Editar recurrente' : 'Nuevo recurrente' }}
             </h2>
-            <button class="btn-ghost btn-sm p-1" (click)="close.emit()">✕</button>
+            <button class="btn-ghost btn-sm p-1" (click)="close.emit()">
+              <lucide-angular [img]="X" class="w-4 h-4" />
+            </button>
           </div>
 
           @if (errorMessage()) {
@@ -55,16 +58,22 @@ import { Category } from '@core/models/category.model';
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-section">
             <!-- Type tabs -->
             <div class="flex rounded-lg overflow-hidden border border-[var(--color-border)]">
-              <button type="button" class="flex-1 py-2 text-sm font-medium transition-colors"
+              <button type="button"
+                class="flex-1 py-2 text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
                 [class.bg-[var(--color-expense)]]="form.value.type === 'expense'"
                 [class.text-white]="form.value.type === 'expense'"
                 [class.text-[var(--color-text-muted)]]="form.value.type !== 'expense'"
-                (click)="setType('expense')">💸 Gasto</button>
-              <button type="button" class="flex-1 py-2 text-sm font-medium transition-colors"
+                (click)="setType('expense')">
+                <lucide-angular [img]="TrendingDown" class="w-4 h-4" /> Gasto
+              </button>
+              <button type="button"
+                class="flex-1 py-2 text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
                 [class.bg-[var(--color-income)]]="form.value.type === 'income'"
                 [class.text-white]="form.value.type === 'income'"
                 [class.text-[var(--color-text-muted)]]="form.value.type !== 'income'"
-                (click)="setType('income')">💰 Ingreso</button>
+                (click)="setType('income')">
+                <lucide-angular [img]="TrendingUp" class="w-4 h-4" /> Ingreso
+              </button>
             </div>
 
             <div class="form-row">
@@ -142,6 +151,10 @@ export class RecurringFormComponent implements OnInit {
   close = output<void>();
   saved = output<void>();
 
+  TrendingUp = TrendingUp;
+  TrendingDown = TrendingDown;
+  X = X;
+  
   private recurringService = inject(RecurringService);
   private categoryService = inject(CategoryService);
 

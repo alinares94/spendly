@@ -13,6 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { LucideAngularModule, X, TrendingDown, TrendingUp } from 'lucide-angular';
 import { TransactionService } from '@core/services/transaction.service';
 import { CategoryService } from '@core/services/category.service';
 import { Transaction, TransactionType, CreateTransactionDto } from '@core/models/transaction.model';
@@ -21,7 +22,7 @@ import { Category } from '@core/models/category.model';
 @Component({
   selector: 'app-transaction-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
@@ -37,7 +38,9 @@ import { Category } from '@core/models/category.model';
             <h2 class="card-title">
               {{ editingTransaction() ? 'Editar movimiento' : 'Nuevo movimiento' }}
             </h2>
-            <button class="btn-ghost btn-sm p-1" (click)="close.emit()">✕</button>
+            <button class="btn-ghost btn-sm p-1" (click)="close.emit()">
+              <lucide-angular [img]="X" class="w-4 h-4" />
+            </button>
           </div>
 
           @if (errorMessage()) {
@@ -52,23 +55,23 @@ import { Category } from '@core/models/category.model';
             <div class="flex rounded-lg overflow-hidden border border-[var(--color-border)]">
               <button
                 type="button"
-                class="flex-1 py-2 text-sm font-medium transition-colors"
+                class="flex-1 py-2 text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
                 [class.bg-[var(--color-expense)]]="form.value.type === 'expense'"
                 [class.text-white]="form.value.type === 'expense'"
                 [class.text-[var(--color-text-muted)]]="form.value.type !== 'expense'"
                 (click)="setType('expense')"
               >
-                💸 Gasto
+                <lucide-angular [img]="TrendingDown" class="w-4 h-4" /> Gasto
               </button>
               <button
                 type="button"
-                class="flex-1 py-2 text-sm font-medium transition-colors"
+                class="flex-1 py-2 text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
                 [class.bg-[var(--color-income)]]="form.value.type === 'income'"
                 [class.text-white]="form.value.type === 'income'"
                 [class.text-[var(--color-text-muted)]]="form.value.type !== 'income'"
                 (click)="setType('income')"
               >
-                💰 Ingreso
+                <lucide-angular [img]="TrendingUp" class="w-4 h-4" /> Ingreso
               </button>
             </div>
 
@@ -145,6 +148,10 @@ import { Category } from '@core/models/category.model';
   `,
 })
 export class TransactionFormComponent implements OnInit {
+  readonly X = X;
+  readonly TrendingDown = TrendingDown;
+  readonly TrendingUp = TrendingUp;
+
   visible = input.required<boolean>();
   editingTransaction = input<Transaction | null>(null);
   close = output<void>();

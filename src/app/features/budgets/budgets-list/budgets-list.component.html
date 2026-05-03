@@ -18,7 +18,7 @@
     <app-loading-spinner />
   } @else if (budgets().length === 0) {
     <app-empty-state
-      icon="🎯"
+      [icon]="X"
       title="Sin presupuestos"
       message="Define límites de gasto por categoría para controlar mejor tu dinero."
       actionLabel="Nuevo presupuesto"
