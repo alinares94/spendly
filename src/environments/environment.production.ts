@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
   supabase: {
-    url: import.meta.env.VITE_SUPABASE_URL,
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+    url: 'https://idagedwvtdogholoyawt.supabase.co',
+    anonKey: 'sb_publishable_Bv_8iCxLztD6TvPcvhD-FQ_n2jitWwM',
   },
   currency: 'EUR',
 };
