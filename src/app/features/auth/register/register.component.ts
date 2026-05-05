@@ -14,6 +14,7 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { LucideAngularModule, LogIn, Mail, UserPlus } from 'lucide-angular';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const pass = group.get('password')?.value;
@@ -24,25 +25,30 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="w-full max-w-md">
       <div class="text-center mb-8">
-        <div class="text-5xl mb-3">💸</div>
+        <div class="text-5xl mb-3 inline-flex justify-center">
+          <lucide-angular [img]="UserPlus" class="h-10 w-10" />
+        </div>
         <h1 class="text-2xl font-bold text-[var(--color-text-primary)]">Crear cuenta</h1>
         <p class="text-sm text-[var(--color-text-muted)] mt-1">Empieza a controlar tus finanzas</p>
       </div>
 
       @if (success()) {
         <div class="card-elevated text-center py-8">
-          <div class="text-4xl mb-4">📧</div>
+          <lucide-angular [img]="Mail" class="mx-auto mb-4 h-10 w-10 text-[var(--color-primary)]" />
           <h2 class="text-lg font-semibold mb-2">¡Revisa tu email!</h2>
           <p class="text-sm text-[var(--color-text-muted)] mb-4">
             Te hemos enviado un enlace de confirmación a <strong>{{ form.value.email }}</strong>.
             Haz clic en el enlace para activar tu cuenta.
           </p>
-          <a routerLink="/auth/login" class="btn-primary inline-flex">Ir al login</a>
+          <a routerLink="/auth/login" class="btn-primary inline-flex items-center gap-2">
+            <lucide-angular [img]="LogIn" class="h-4 w-4" />
+            Ir al login
+          </a>
         </div>
       } @else {
         <div class="card-elevated">
@@ -126,6 +132,10 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   `,
 })
 export class RegisterComponent {
+  readonly LogIn = LogIn;
+  readonly Mail = Mail;
+  readonly UserPlus = UserPlus;
+
   private auth = inject(AuthService);
 
   isLoading = signal(false);

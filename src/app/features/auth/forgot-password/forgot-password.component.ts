@@ -12,16 +12,19 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { LucideAngularModule, ArrowLeft, LogIn, Mail } from 'lucide-angular';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="w-full max-w-md">
       <div class="text-center mb-8">
-        <div class="text-5xl mb-3">🔑</div>
+        <div class="text-5xl mb-3 inline-flex justify-center">
+          <lucide-angular [img]="Mail" class="h-10 w-10" />
+        </div>
         <h1 class="text-2xl font-bold text-[var(--color-text-primary)]">Recuperar contraseña</h1>
         <p class="text-sm text-[var(--color-text-muted)] mt-1">
           Te enviaremos un enlace para restablecer tu contraseña
@@ -30,12 +33,15 @@ import { AuthService } from '@core/services/auth.service';
 
       @if (success()) {
         <div class="card-elevated text-center py-8">
-          <div class="text-4xl mb-4">📧</div>
+          <lucide-angular [img]="Mail" class="mx-auto mb-4 h-10 w-10 text-[var(--color-primary)]" />
           <h2 class="text-lg font-semibold mb-2">¡Email enviado!</h2>
           <p class="text-sm text-[var(--color-text-muted)] mb-4">
             Revisa tu bandeja de entrada y sigue las instrucciones.
           </p>
-          <a routerLink="/auth/login" class="btn-primary inline-flex">Volver al login</a>
+          <a routerLink="/auth/login" class="btn-primary inline-flex items-center gap-2">
+            <lucide-angular [img]="LogIn" class="h-4 w-4" />
+            Volver al login
+          </a>
         </div>
       } @else {
         <div class="card-elevated">
@@ -77,7 +83,10 @@ import { AuthService } from '@core/services/auth.service';
           </form>
 
           <p class="text-center text-sm text-[var(--color-text-muted)] mt-4">
-            <a routerLink="/auth/login" class="font-medium">← Volver al login</a>
+            <a routerLink="/auth/login" class="font-medium inline-flex items-center gap-1">
+              <lucide-angular [img]="ArrowLeft" class="h-4 w-4" />
+              Volver al login
+            </a>
           </p>
         </div>
       }
@@ -85,6 +94,10 @@ import { AuthService } from '@core/services/auth.service';
   `,
 })
 export class ForgotPasswordComponent {
+  readonly ArrowLeft = ArrowLeft;
+  readonly LogIn = LogIn;
+  readonly Mail = Mail;
+
   private auth = inject(AuthService);
 
   isLoading = signal(false);

@@ -12,11 +12,12 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { LucideAngularModule, Key, LogIn, UserPlus } from 'lucide-angular';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="w-full max-w-md">
@@ -70,7 +71,8 @@ import { AuthService } from '@core/services/auth.service';
           </div>
 
           <div class="flex items-center justify-end">
-            <a routerLink="/auth/forgot-password" class="text-xs text-[var(--color-primary)]">
+            <a routerLink="/auth/forgot-password" class="text-xs text-[var(--color-primary)] inline-flex items-center gap-1">
+              <lucide-angular [img]="Key" class="h-4 w-4" />
               ¿Olvidaste tu contraseña?
             </a>
           </div>
@@ -84,6 +86,7 @@ import { AuthService } from '@core/services/auth.service';
               <span class="animate-spin">⏳</span>
               Iniciando sesión...
             } @else {
+              <lucide-angular [img]="LogIn" class="inline h-4 w-4 mr-2" />
               Iniciar sesión
             }
           </button>
@@ -93,13 +96,20 @@ import { AuthService } from '@core/services/auth.service';
 
         <p class="text-center text-sm text-[var(--color-text-muted)] mt-4">
           ¿No tienes cuenta?
-          <a routerLink="/auth/register" class="font-medium">Regístrate</a>
+          <a routerLink="/auth/register" class="font-medium inline-flex items-center gap-1">
+            <lucide-angular [img]="UserPlus" class="h-4 w-4" />
+            Regístrate
+          </a>
         </p>
       </div>
     </div>
   `,
 })
 export class LoginComponent {
+  readonly Key = Key;
+  readonly LogIn = LogIn;
+  readonly UserPlus = UserPlus;
+
   private auth = inject(AuthService);
   private router = inject(Router);
 
