@@ -2,29 +2,36 @@
 
 const fs = require('fs');
 const path = require('path');
-const dotenv = require('dotenv');
 
-// Leer el archivo .env
+// Load .env for local development if it exists
 const envPath = path.join(__dirname, '../.env');
-const envConfig = dotenv.parse(fs.readFileSync(envPath));
+if (fs.existsSync(envPath)) {
+  require('dotenv').config({ path: envPath });
+}
 
-// Generar environment.ts
+const url = process.env.VITE_SUPABASE_URL;
+const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+if (!url || !anonKey) {
+  console.error('❌ Faltan variables de entorno: VITE_SUPABASE_URL y/o VITE_SUPABASE_ANON_KEY');
+  process.exit(1);
+}
+
 const envTs = `export const environment = {
   production: false,
   supabase: {
-    url: '${envConfig.VITE_SUPABASE_URL}',
-    anonKey: '${envConfig.VITE_SUPABASE_ANON_KEY}',
+    url: '${url}',
+    anonKey: '${anonKey}',
   },
   currency: 'EUR',
 };
 `;
 
-// Generar environment.production.ts
 const envProdTs = `export const environment = {
   production: true,
   supabase: {
-    url: '${envConfig.VITE_SUPABASE_URL}',
-    anonKey: '${envConfig.VITE_SUPABASE_ANON_KEY}',
+    url: '${url}',
+    anonKey: '${anonKey}',
   },
   currency: 'EUR',
 };
@@ -33,4 +40,4 @@ const envProdTs = `export const environment = {
 fs.writeFileSync(path.join(__dirname, '../src/environments/environment.ts'), envTs);
 fs.writeFileSync(path.join(__dirname, '../src/environments/environment.production.ts'), envProdTs);
 
-console.log('✅ Archivos de entorno generados desde .env');
+console.log('✅ Archivos de entorno generados correctamente');
