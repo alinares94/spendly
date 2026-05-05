@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
-import { LucideAngularModule, Key, LogIn, UserPlus } from 'lucide-angular';
+import { LucideAngularModule, LogIn, UserPlus } from 'lucide-angular';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +23,9 @@ import { LucideAngularModule, Key, LogIn, UserPlus } from 'lucide-angular';
     <div class="w-full max-w-md">
       <!-- Header -->
       <div class="text-center mb-8">
-        <div class="text-5xl mb-3">💸</div>
+        <div class="text-5xl mb-3 inline-flex justify-center">
+          <lucide-angular [img]="LogIn" class="h-12 w-12 text-[var(--color-primary)]" />
+        </div>
         <h1 class="text-2xl font-bold text-[var(--color-text-primary)]">Bienvenido a Spendly</h1>
         <p class="text-sm text-[var(--color-text-muted)] mt-1">Inicia sesión para continuar</p>
       </div>
@@ -72,7 +74,6 @@ import { LucideAngularModule, Key, LogIn, UserPlus } from 'lucide-angular';
 
           <div class="flex items-center justify-end">
             <a routerLink="/auth/forgot-password" class="text-xs text-[var(--color-primary)] inline-flex items-center gap-1">
-              <lucide-angular [img]="Key" class="h-4 w-4" />
               ¿Olvidaste tu contraseña?
             </a>
           </div>
@@ -106,7 +107,6 @@ import { LucideAngularModule, Key, LogIn, UserPlus } from 'lucide-angular';
   `,
 })
 export class LoginComponent {
-  readonly Key = Key;
   readonly LogIn = LogIn;
   readonly UserPlus = UserPlus;
 
