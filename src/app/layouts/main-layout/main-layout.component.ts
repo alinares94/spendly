@@ -40,7 +40,7 @@ import { TopbarComponent } from './topbar/topbar.component';
   `,
 })
 export class MainLayoutComponent {
-  sidebarCollapsed = signal<boolean>(false);
+  sidebarCollapsed = signal<boolean>(true);
   isMobile = signal<boolean>(window.innerWidth < 1024);
 
   sidebarClasses() {

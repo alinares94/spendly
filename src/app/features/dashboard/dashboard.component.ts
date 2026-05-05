@@ -9,6 +9,7 @@ import {
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { LucideAngularModule, Wallet, TrendingDown, TrendingUp, Scale, ChartPie, ArrowDownLeft, ArrowUpRight } from 'lucide-angular';
+import { getCategoryIcon } from '@core/utils/category-icons';
 import type {
   ApexAxisChartSeries,
   ApexNonAxisChartSeries,
@@ -72,6 +73,7 @@ export class DashboardComponent implements OnInit {
   readonly ChartPie = ChartPie;
   readonly ArrowDownLeft = ArrowDownLeft;
   readonly ArrowUpRight = ArrowUpRight;
+  readonly getCategoryIcon = getCategoryIcon;
 
   isLoading = signal(true);
   transactions = signal<Transaction[]>([]);

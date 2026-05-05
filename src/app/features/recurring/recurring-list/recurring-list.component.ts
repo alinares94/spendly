@@ -93,7 +93,6 @@ export class RecurringListComponent implements OnInit {
 
   freqLabel(f: string) {
     const map: Record<string, string> = {
-      weekly: 'Semanal',
       monthly: 'Mensual',
       yearly: 'Anual',
     };

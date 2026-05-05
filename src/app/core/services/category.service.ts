@@ -20,9 +20,11 @@ export class CategoryService {
   }
 
   async createCategory(category: Omit<Category, 'id' | 'user_id' | 'created_at'>): Promise<Category> {
+    const { data: { user } } = await this.supabase.client.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
     const { data, error } = await this.supabase.client
       .from('categories')
-      .insert(category)
+      .insert({ ...category, user_id: user.id })
       .select()
       .single();
     if (error) throw error;

@@ -6,6 +6,7 @@ import {
   OnInit,
   input,
   output,
+  effect,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule, X } from 'lucide-angular';
@@ -110,14 +111,28 @@ export class BudgetFormComponent implements OnInit {
     limit_amount: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
   });
 
+  constructor() {
+    effect(() => {
+      if (!this.visible()) return;
+      const b = this.editing();
+      if (b) {
+        this.form.patchValue({ limit_amount: b.limit_amount });
+        this.form.get('month')?.disable();
+        this.form.get('category_id')?.disable();
+      } else {
+        this.form.reset({
+          month: new Date().toISOString().slice(0, 7),
+          category_id: '',
+          limit_amount: null,
+        });
+        this.form.get('month')?.enable();
+        this.form.get('category_id')?.enable();
+      }
+    });
+  }
+
   async ngOnInit() {
     this.categories.set(await this.categoryService.getCategories('expense'));
-    const b = this.editing();
-    if (b) {
-      this.form.patchValue({ limit_amount: b.limit_amount });
-      this.form.get('month')?.disable();
-      this.form.get('category_id')?.disable();
-    }
   }
 
   fieldInvalid(field: string) {

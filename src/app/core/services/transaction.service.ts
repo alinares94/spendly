@@ -61,9 +61,11 @@ export class TransactionService {
   }
 
   async createTransaction(dto: CreateTransactionDto): Promise<Transaction> {
+    const { data: { user } } = await this.supabase.client.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
     const { data, error } = await this.supabase.client
       .from('transactions')
-      .insert({ ...dto, source: dto.source ?? 'manual' })
+      .insert({ ...dto, source: dto.source ?? 'manual', user_id: user.id })
       .select('*, category:categories(*)')
       .single();
     if (error) throw error;

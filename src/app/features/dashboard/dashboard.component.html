@@ -48,7 +48,7 @@
         </div>
         @if (expensesByCategory().length === 0) {
           <div class="flex flex-col items-center justify-center py-10 text-[var(--color-text-muted)]">
-            <span class="text-4xl mb-2">🍩</span>
+            <lucide-angular [img]="ChartPie" class="w-10 h-10 mb-2 opacity-40" />
             <span class="text-sm">Sin gastos este mes</span>
           </div>
         } @else {
@@ -156,10 +156,14 @@
           @for (tx of transactions().slice(0, 5); track tx.id) {
             <div class="flex items-center gap-3 py-2 border-b border-[var(--color-border)] last:border-0">
               <div
-                class="w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0"
+                class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
                 [style.background-color]="tx.category?.color ? tx.category!.color + '20' : 'var(--color-bg-secondary)'"
+                [style.color]="tx.category?.color ?? (tx.type === 'income' ? 'var(--color-income)' : 'var(--color-expense)')"
               >
-                {{ tx.category?.icon ?? (tx.type === 'income' ? '💰' : '💸') }}
+                <lucide-angular
+                  [img]="getCategoryIcon(tx.category?.icon) ?? (tx.type === 'income' ? ArrowUpRight : ArrowDownLeft)"
+                  class="w-4 h-4"
+                />
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium truncate">

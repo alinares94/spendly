@@ -81,6 +81,7 @@ interface NavItem {
       <div class="sidebar-footer">
         <button
           class="sidebar-link w-full"
+          [class.justify-center]="collapsed()"
           (click)="onSignOut()"
           [title]="collapsed() ? 'Cerrar sesión' : ''"
         >

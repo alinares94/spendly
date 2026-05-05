@@ -59,10 +59,12 @@ export class BudgetService {
   }
 
   async createBudget(dto: CreateBudgetDto): Promise<Budget> {
+    const { data: { user } } = await this.supabase.client.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
     const month = `${dto.month}-01`;
     const { data, error } = await this.supabase.client
       .from('budgets')
-      .insert({ ...dto, month })
+      .insert({ ...dto, month, user_id: user.id })
       .select('*, category:categories(*)')
       .single();
     if (error) throw error;

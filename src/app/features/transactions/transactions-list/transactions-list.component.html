@@ -6,9 +6,7 @@
       <p class="text-sm text-[var(--color-text-muted)] mt-0.5">Registro de ingresos y gastos</p>
     </div>
     <button class="btn-primary" (click)="openCreate()">
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-      </svg>
+      <lucide-angular [img]="Plus" class="w-4 h-4" />
       Nuevo movimiento
     </button>
   </div>
@@ -66,7 +64,7 @@
     <app-loading-spinner />
   } @else if (transactions().length === 0) {
     <app-empty-state
-      [icon]="X"
+      [icon]="CreditCard"
       title="Sin movimientos"
       message="No hay movimientos para este período. Crea el primero."
       actionLabel="Nuevo movimiento"
@@ -125,10 +123,14 @@
       @for (tx of transactions(); track tx.id) {
         <div class="card-sm flex items-center gap-3">
           <div
-            class="w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0"
+            class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
             [style.background-color]="tx.category?.color ? tx.category!.color + '20' : 'var(--color-bg-secondary)'"
+            [style.color]="tx.category?.color ?? (tx.type === 'income' ? 'var(--color-income)' : 'var(--color-expense)')"
           >
-            {{ tx.category?.icon ?? (tx.type === 'income' ? '💰' : '💸') }}
+            <lucide-angular
+              [img]="getCategoryIcon(tx.category?.icon) ?? (tx.type === 'income' ? ArrowUpRight : ArrowDownLeft)"
+              class="w-5 h-5"
+            />
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium truncate">
@@ -143,8 +145,12 @@
               {{ tx.type === 'income' ? '+' : '-' }}{{ tx.amount | currency:'EUR':'symbol':'1.2-2':'es' }}
             </p>
             <div class="flex gap-1 mt-1 justify-end">
-              <button class="btn-ghost btn-sm py-0.5 px-1.5 text-xs" (click)="openEdit(tx)">✏️</button>
-              <button class="btn-ghost btn-sm py-0.5 px-1.5 text-xs" (click)="openDelete(tx)">🗑️</button>
+              <button class="btn-ghost btn-sm p-1.5" (click)="openEdit(tx)" title="Editar">
+                <lucide-angular [img]="Pencil" class="w-4 h-4" />
+              </button>
+              <button class="btn-ghost btn-sm p-1.5 text-[var(--color-danger)]" (click)="openDelete(tx)" title="Eliminar">
+                <lucide-angular [img]="Trash2" class="w-4 h-4" />
+              </button>
             </div>
           </div>
         </div>

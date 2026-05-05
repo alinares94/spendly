@@ -5,9 +5,7 @@
       <p class="text-sm text-[var(--color-text-muted)] mt-0.5">Controla el gasto por categoría</p>
     </div>
     <button class="btn-primary" (click)="openCreate()">
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-      </svg>
+      <lucide-angular [img]="Plus" class="w-4 h-4" />
       Nuevo presupuesto
     </button>
   </div>
@@ -18,7 +16,7 @@
     <app-loading-spinner />
   } @else if (budgets().length === 0) {
     <app-empty-state
-      [icon]="X"
+      [icon]="Target"
       title="Sin presupuestos"
       message="Define límites de gasto por categoría para controlar mejor tu dinero."
       actionLabel="Nuevo presupuesto"
@@ -59,8 +57,9 @@
           </div>
 
           @if ((b.usage_percentage ?? 0) > 90) {
-            <p class="text-xs text-[var(--color-danger)] font-medium">
-              ⚠️ Presupuesto casi agotado
+            <p class="text-xs text-[var(--color-danger)] font-medium flex items-center gap-1">
+              <lucide-angular [img]="TriangleAlert" class="w-3.5 h-3.5" />
+              Presupuesto casi agotado
             </p>
           }
 

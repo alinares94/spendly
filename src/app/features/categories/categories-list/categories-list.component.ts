@@ -9,6 +9,7 @@ import {
 import { LucideAngularModule, LucideIconData, Tag, Plus, Pencil, Trash2, X } from 'lucide-angular';
 import { CategoryService } from '@core/services/category.service';
 import { Category } from '@core/models/category.model';
+import { getCategoryIcon } from '@core/utils/category-icons';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
@@ -33,6 +34,7 @@ export class CategoriesListComponent implements OnInit {
   readonly Pencil = Pencil;
   readonly Trash2 = Trash2;
   readonly X = X;
+  readonly getCategoryIcon = getCategoryIcon;
 
   private categoryService = inject(CategoryService);
 

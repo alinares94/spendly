@@ -6,6 +6,7 @@ import {
   OnInit,
   input,
   output,
+  effect,
 } from '@angular/core';
 import {
   FormControl,
@@ -180,22 +181,35 @@ export class TransactionFormComponent implements OnInit {
     ),
   });
 
+  constructor() {
+    effect(() => {
+      if (!this.visible()) return;
+      const tx = this.editingTransaction();
+      if (tx) {
+        this.form.patchValue({
+          type: tx.type,
+          amount: tx.amount,
+          description: tx.description ?? '',
+          category_id: tx.category_id ?? '',
+          date: tx.date,
+        });
+      } else {
+        this.form.reset({
+          type: 'expense',
+          amount: null,
+          description: '',
+          category_id: '',
+          date: new Date().toISOString().slice(0, 10),
+        });
+      }
+      this.updateFilteredCategories();
+    });
+  }
+
   async ngOnInit() {
     const cats = await this.categoryService.getCategories();
     this.categories.set(cats);
     this.updateFilteredCategories();
-
-    const tx = this.editingTransaction();
-    if (tx) {
-      this.form.patchValue({
-        type: tx.type,
-        amount: tx.amount,
-        description: tx.description ?? '',
-        category_id: tx.category_id ?? '',
-        date: tx.date,
-      });
-      this.updateFilteredCategories();
-    }
   }
 
   setType(type: TransactionType) {

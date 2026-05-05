@@ -1,6 +1,6 @@
 import { Category } from './category.model';
 
-export type RecurringFrequency = 'weekly' | 'monthly' | 'yearly';
+export type RecurringFrequency = 'monthly' | 'yearly';
 export type RecurringType = 'income' | 'expense';
 
 export interface RecurringTransaction {

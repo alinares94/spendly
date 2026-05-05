@@ -6,6 +6,7 @@ import {
   OnInit,
   input,
   output,
+  effect,
 } from '@angular/core';
 import {
   FormControl,
@@ -93,7 +94,6 @@ import { Category } from '@core/models/category.model';
               <div class="form-field">
                 <label class="form-label">Frecuencia</label>
                 <select class="input" formControlName="frequency">
-                  <option value="weekly">Semanal</option>
                   <option value="monthly">Mensual</option>
                   <option value="yearly">Anual</option>
                 </select>
@@ -154,7 +154,7 @@ export class RecurringFormComponent implements OnInit {
   TrendingUp = TrendingUp;
   TrendingDown = TrendingDown;
   X = X;
-  
+
   private recurringService = inject(RecurringService);
   private categoryService = inject(CategoryService);
 
@@ -173,24 +173,39 @@ export class RecurringFormComponent implements OnInit {
     end_date: new FormControl<string>(''),
   });
 
+  constructor() {
+    effect(() => {
+      if (!this.visible()) return;
+      const rec = this.editing();
+      if (rec) {
+        this.form.patchValue({
+          type: rec.type,
+          amount: rec.amount,
+          description: rec.description ?? '',
+          category_id: rec.category_id ?? '',
+          frequency: rec.frequency,
+          start_date: rec.start_date,
+          end_date: rec.end_date ?? '',
+        });
+      } else {
+        this.form.reset({
+          type: 'expense',
+          amount: null,
+          description: '',
+          category_id: '',
+          frequency: 'monthly',
+          start_date: new Date().toISOString().slice(0, 10),
+          end_date: '',
+        });
+      }
+      this.updateFilteredCategories();
+    });
+  }
+
   async ngOnInit() {
     const cats = await this.categoryService.getCategories();
     this.categories.set(cats);
     this.updateFilteredCategories();
-
-    const rec = this.editing();
-    if (rec) {
-      this.form.patchValue({
-        type: rec.type,
-        amount: rec.amount,
-        description: rec.description ?? '',
-        category_id: rec.category_id ?? '',
-        frequency: rec.frequency,
-        start_date: rec.start_date,
-        end_date: rec.end_date ?? '',
-      });
-      this.updateFilteredCategories();
-    }
   }
 
   setType(type: RecurringType) {

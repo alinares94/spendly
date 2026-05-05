@@ -3,13 +3,15 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
-  OnInit,
   input,
   output,
+  effect,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LucideAngularModule, X, TrendingDown, TrendingUp, Tag } from 'lucide-angular';
 import { CategoryService } from '@core/services/category.service';
 import { Category, CategoryType } from '@core/models/category.model';
+import { CATEGORY_ICONS } from '@core/utils/category-icons';
 
 const PRESET_COLORS = [
   '#ef4444', '#f97316', '#f59e0b', '#22c55e',
@@ -17,15 +19,10 @@ const PRESET_COLORS = [
   '#64748b', '#84cc16',
 ];
 
-const PRESET_ICONS = [
-  '🏠', '🍔', '🚗', '💊', '👗', '📱', '✈️', '🎮',
-  '💰', '💼', '🎓', '🛒', '⚡', '💧', '🐾', '🎵',
-];
-
 @Component({
   selector: 'app-category-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
@@ -34,7 +31,9 @@ const PRESET_ICONS = [
         <div class="card w-full max-w-md max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
           <div class="card-header">
             <h2 class="card-title">{{ editing() ? 'Editar categoría' : 'Nueva categoría' }}</h2>
-            <button class="btn-ghost btn-sm p-1" (click)="close.emit()">✕</button>
+            <button class="btn-ghost btn-sm p-1" (click)="close.emit()">
+              <lucide-angular [img]="X" class="w-4 h-4" />
+            </button>
           </div>
 
           @if (errorMessage()) {
@@ -48,16 +47,22 @@ const PRESET_ICONS = [
             <!-- Type tabs -->
             @if (!editing()) {
               <div class="flex rounded-lg overflow-hidden border border-[var(--color-border)]">
-                <button type="button" class="flex-1 py-2 text-sm font-medium transition-colors"
+                <button type="button"
+                  class="flex-1 py-2 text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
                   [class.bg-[var(--color-expense)]]="form.value.type === 'expense'"
                   [class.text-white]="form.value.type === 'expense'"
                   [class.text-[var(--color-text-muted)]]="form.value.type !== 'expense'"
-                  (click)="form.patchValue({ type: 'expense' })">💸 Gasto</button>
-                <button type="button" class="flex-1 py-2 text-sm font-medium transition-colors"
+                  (click)="form.patchValue({ type: 'expense' })">
+                  <lucide-angular [img]="TrendingDown" class="w-4 h-4" /> Gasto
+                </button>
+                <button type="button"
+                  class="flex-1 py-2 text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
                   [class.bg-[var(--color-income)]]="form.value.type === 'income'"
                   [class.text-white]="form.value.type === 'income'"
                   [class.text-[var(--color-text-muted)]]="form.value.type !== 'income'"
-                  (click)="form.patchValue({ type: 'income' })">💰 Ingreso</button>
+                  (click)="form.patchValue({ type: 'income' })">
+                  <lucide-angular [img]="TrendingUp" class="w-4 h-4" /> Ingreso
+                </button>
               </div>
             }
 
@@ -92,18 +97,33 @@ const PRESET_ICONS = [
 
             <!-- Icon picker -->
             <div class="form-field">
-              <label class="form-label">Icono</label>
+              <label class="form-label">Icono <span class="text-[var(--color-text-muted)]">(opcional)</span></label>
               <div class="flex flex-wrap gap-2">
-                @for (icon of presetIcons; track icon) {
+                <!-- Sin icono -->
+                <button
+                  type="button"
+                  class="w-9 h-9 rounded-lg border-2 transition-all flex items-center justify-center"
+                  [class.border-[var(--color-primary)]]="!form.value.icon"
+                  [class.bg-[var(--color-bg-secondary)]]="!form.value.icon"
+                  [class.border-[var(--color-border)]]="!!form.value.icon"
+                  (click)="form.patchValue({ icon: null })"
+                  title="Sin icono"
+                >
+                  <lucide-angular [img]="Tag" class="w-4 h-4 text-[var(--color-text-muted)]" />
+                </button>
+
+                @for (def of categoryIcons; track def.name) {
                   <button
                     type="button"
-                    class="w-9 h-9 rounded-lg text-lg border transition-all hover:scale-110"
-                    [class.border-[var(--color-primary)]]="form.value.icon === icon"
-                    [class.bg-[var(--color-bg-secondary)]]="form.value.icon === icon"
-                    [class.border-transparent]="form.value.icon !== icon"
-                    [class.hover:bg-[var(--color-bg-secondary)]]="form.value.icon !== icon"
-                    (click)="form.patchValue({ icon })"
-                  >{{ icon }}</button>
+                    class="w-9 h-9 rounded-lg border-2 transition-all flex items-center justify-center hover:bg-[var(--color-bg-secondary)]"
+                    [class.border-[var(--color-primary)]]="form.value.icon === def.name"
+                    [class.bg-[var(--color-bg-secondary)]]="form.value.icon === def.name"
+                    [class.border-transparent]="form.value.icon !== def.name"
+                    (click)="form.patchValue({ icon: def.name })"
+                    [title]="def.name"
+                  >
+                    <lucide-angular [img]="def.icon" class="w-4 h-4" />
+                  </button>
                 }
               </div>
             </div>
@@ -121,36 +141,51 @@ const PRESET_ICONS = [
     }
   `,
 })
-export class CategoryFormComponent implements OnInit {
+export class CategoryFormComponent {
   visible = input.required<boolean>();
   editing = input<Category | null>(null);
   close = output<void>();
   saved = output<void>();
+
+  readonly X = X;
+  readonly TrendingDown = TrendingDown;
+  readonly TrendingUp = TrendingUp;
+  readonly Tag = Tag;
+  readonly categoryIcons = CATEGORY_ICONS;
 
   private categoryService = inject(CategoryService);
 
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   presetColors = PRESET_COLORS;
-  presetIcons = PRESET_ICONS;
 
   form = new FormGroup({
     type: new FormControl<CategoryType>('expense', Validators.required),
     name: new FormControl<string>('', [Validators.required, Validators.maxLength(50)]),
     color: new FormControl<string>(PRESET_COLORS[5]),
-    icon: new FormControl<string>(PRESET_ICONS[0]),
+    icon: new FormControl<string | null>(null),
   });
 
-  ngOnInit() {
-    const cat = this.editing();
-    if (cat) {
-      this.form.patchValue({
-        type: cat.type,
-        name: cat.name,
-        color: cat.color ?? PRESET_COLORS[5],
-        icon: cat.icon ?? PRESET_ICONS[0],
-      });
-    }
+  constructor() {
+    effect(() => {
+      if (!this.visible()) return;
+      const cat = this.editing();
+      if (cat) {
+        this.form.patchValue({
+          type: cat.type,
+          name: cat.name,
+          color: cat.color ?? PRESET_COLORS[5],
+          icon: cat.icon ?? null,
+        });
+      } else {
+        this.form.reset({
+          type: 'expense',
+          name: '',
+          color: PRESET_COLORS[5],
+          icon: null,
+        });
+      }
+    });
   }
 
   fieldInvalid(field: string) {
