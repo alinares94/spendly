@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 import { LucideAngularModule, LogIn, UserPlus } from 'lucide-angular';
 
 @Component({
@@ -84,7 +85,7 @@ import { LucideAngularModule, LogIn, UserPlus } from 'lucide-angular';
             [disabled]="isLoading() || form.invalid"
           >
             @if (isLoading()) {
-              <span class="animate-spin">⏳</span>
+              <lucide-angular [img]="LogIn" class="inline h-4 w-4 mr-2" />
               Iniciando sesión...
             } @else {
               <lucide-angular [img]="LogIn" class="inline h-4 w-4 mr-2" />

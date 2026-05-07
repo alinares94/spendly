@@ -36,108 +36,6 @@
       />
     </div>
 
-    <!-- Charts row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <!-- Gastos por categoría -->
-      <div class="card-elevated">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">Gastos por categoría</h2>
-            <p class="card-subtitle">{{ selectedMonth() | date:'MMMM yyyy':'':'es' }}</p>
-          </div>
-        </div>
-        @if (expensesByCategory().length === 0) {
-          <div class="flex flex-col items-center justify-center py-10 text-[var(--color-text-muted)]">
-            <lucide-angular [img]="ChartPie" class="w-10 h-10 mb-2 opacity-40" />
-            <span class="text-sm">Sin gastos este mes</span>
-          </div>
-        } @else {
-          <apx-chart
-            [series]="pieChartOptions().series!"
-            [chart]="pieChartOptions().chart!"
-            [labels]="pieChartOptions().labels!"
-            [legend]="pieChartOptions().legend!"
-            [theme]="pieChartOptions().theme!"
-            [tooltip]="pieChartOptions().tooltip!"
-            [dataLabels]="pieChartOptions().dataLabels!"
-            [responsive]="pieChartOptions().responsive!"
-          />
-        }
-      </div>
-
-      <!-- Ingresos vs Gastos (6 meses) -->
-      <div class="card-elevated">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">Ingresos vs Gastos</h2>
-            <p class="card-subtitle">Últimos 6 meses</p>
-          </div>
-        </div>
-        <apx-chart
-          [series]="barChartOptions().series!"
-          [chart]="barChartOptions().chart!"
-          [xaxis]="barChartOptions().xaxis!"
-          [colors]="barChartOptions().colors!"
-          [legend]="barChartOptions().legend!"
-          [theme]="barChartOptions().theme!"
-          [tooltip]="barChartOptions().tooltip!"
-          [plotOptions]="barChartOptions().plotOptions!"
-          [dataLabels]="barChartOptions().dataLabels!"
-        />
-      </div>
-    </div>
-
-    <!-- Presupuestos del mes -->
-    @if (budgets().length > 0) {
-      <div class="card-elevated">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">Presupuestos</h2>
-            <p class="card-subtitle">Progreso del mes actual</p>
-          </div>
-          <a href="/budgets" class="btn-ghost btn-sm text-xs">Ver todos →</a>
-        </div>
-        <div class="space-y-4">
-          @for (budget of budgets(); track budget.id) {
-            <div class="space-y-1.5">
-              <div class="flex justify-between text-sm">
-                <div class="flex items-center gap-2">
-                  @if (budget.category?.icon) {
-                    <span>{{ budget.category!.icon }}</span>
-                  }
-                  <span class="font-medium">{{ budget.category?.name ?? 'Sin categoría' }}</span>
-                </div>
-                <span class="text-[var(--color-text-muted)]">
-                  {{ budget.spent_amount! | currency:'EUR':'symbol':'1.2-2':'es' }}
-                  /
-                  {{ budget.limit_amount | currency:'EUR':'symbol':'1.2-2':'es' }}
-                </span>
-              </div>
-              <div class="progress-bar-track">
-                <div
-                  class="progress-bar-fill"
-                  [class.progress-bar-ok]="budget.usage_percentage! <= 70"
-                  [class.progress-bar-warning]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
-                  [class.progress-bar-danger]="budget.usage_percentage! > 90"
-                  [style.width.%]="budget.usage_percentage"
-                ></div>
-              </div>
-              <div class="flex justify-end">
-                <span
-                  class="text-xs"
-                  [class.text-[var(--color-text-muted)]]="budget.usage_percentage! <= 70"
-                  [class.text-[var(--color-warning)]]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
-                  [class.text-[var(--color-danger)]]="budget.usage_percentage! > 90"
-                >
-                  {{ budget.usage_percentage }}%
-                </span>
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-    }
-
     <!-- Últimos movimientos -->
     <div class="card-elevated">
       <div class="card-header">
@@ -185,5 +83,91 @@
         </div>
       }
     </div>
+
+    <!-- Charts row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- Gastos por categoría -->
+      <div class="card-elevated">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Gastos por categoría</h2>
+            <p class="card-subtitle">{{ selectedMonth() | date:'MMMM yyyy':'':'es' }}</p>
+          </div>
+        </div>
+        @if (expensesByCategory().length === 0) {
+          <div class="flex flex-col items-center justify-center py-10 text-[var(--color-text-muted)]">
+            <lucide-angular [img]="ChartPie" class="w-10 h-10 mb-2 opacity-40" />
+            <span class="text-sm">Sin gastos este mes</span>
+          </div>
+        } @else {
+          <div echarts [options]="pieChartOptions()" [theme]="themeMode()" [autoResize]="true" class="min-h-[260px] h-[340px]"></div>
+        }
+      </div>
+
+      <!-- Ingresos vs Gastos (6 meses) -->
+      <div class="card-elevated">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Ingresos vs Gastos</h2>
+            <p class="card-subtitle">Últimos 6 meses</p>
+          </div>
+        </div>
+        <div echarts [options]="barChartOptions()" [theme]="themeMode()" [autoResize]="true" class="min-h-[260px] h-[340px]"></div>
+      </div>
+    </div>
+
+    <!-- Presupuestos del mes -->
+    @if (budgets().length > 0) {
+      <div class="card-elevated">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Presupuestos</h2>
+            <p class="card-subtitle">Progreso del mes actual</p>
+          </div>
+          <a href="/budgets" class="btn-ghost btn-sm text-xs">Ver todos →</a>
+        </div>
+        <div class="space-y-4">
+          @for (budget of budgets(); track budget.id) {
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-sm">
+                <div class="flex items-center gap-2">
+                  @if (getCategoryIcon(budget.category?.icon)) {
+                    <lucide-angular
+                      [img]="getCategoryIcon(budget.category?.icon)!"
+                      class="w-4 h-4"
+                    />
+                  }
+                  <span class="font-medium">{{ budget.category?.name ?? 'Sin categoría' }}</span>
+                </div>
+                <span class="text-[var(--color-text-muted)]">
+                  {{ budget.spent_amount! | currency:'EUR':'symbol':'1.2-2':'es' }}
+                  /
+                  {{ budget.limit_amount | currency:'EUR':'symbol':'1.2-2':'es' }}
+                </span>
+              </div>
+              <div class="progress-bar-track">
+                <div
+                  class="progress-bar-fill"
+                  [class.progress-bar-ok]="budget.usage_percentage! <= 70"
+                  [class.progress-bar-warning]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
+                  [class.progress-bar-danger]="budget.usage_percentage! > 90"
+                  [style.width.%]="budget.usage_percentage"
+                ></div>
+              </div>
+              <div class="flex justify-end">
+                <span
+                  class="text-xs"
+                  [class.text-[var(--color-text-muted)]]="budget.usage_percentage! <= 70"
+                  [class.text-[var(--color-warning)]]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
+                  [class.text-[var(--color-danger)]]="budget.usage_percentage! > 90"
+                >
+                  {{ budget.usage_percentage }}%
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
   }
 </div>

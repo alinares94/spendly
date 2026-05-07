@@ -7,21 +7,11 @@ import {
   computed,
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { NgApexchartsModule } from 'ng-apexcharts';
+import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
+import * as echarts from 'echarts';
+import type { EChartsOption } from 'echarts';
 import { LucideAngularModule, Wallet, TrendingDown, TrendingUp, Scale, ChartPie, ArrowDownLeft, ArrowUpRight } from 'lucide-angular';
 import { getCategoryIcon } from '@core/utils/category-icons';
-import type {
-  ApexAxisChartSeries,
-  ApexNonAxisChartSeries,
-  ApexChart,
-  ApexXAxis,
-  ApexDataLabels,
-  ApexPlotOptions,
-  ApexLegend,
-  ApexTooltip,
-  ApexTheme,
-  ApexResponsive,
-} from 'ng-apexcharts';
 
 import { TransactionService } from '@core/services/transaction.service';
 import { BudgetService } from '@core/services/budget.service';
@@ -32,25 +22,11 @@ import { StatCardComponent } from '@shared/components/stat-card/stat-card.compon
 import { MonthPickerComponent } from '@shared/components/month-picker/month-picker.component';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 
-export interface ChartOptions {
-  series: ApexAxisChartSeries | ApexNonAxisChartSeries;
-  chart: ApexChart;
-  xaxis: ApexXAxis;
-  dataLabels: ApexDataLabels;
-  plotOptions: ApexPlotOptions;
-  legend: ApexLegend;
-  tooltip: ApexTooltip;
-  theme: ApexTheme;
-  responsive: ApexResponsive[];
-  labels: string[];
-  colors: string[];
-}
-
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    NgApexchartsModule,
+    NgxEchartsDirective,
     LucideAngularModule,
     StatCardComponent,
     MonthPickerComponent,
@@ -58,6 +34,7 @@ export interface ChartOptions {
     CurrencyPipe,
     DatePipe,
   ],
+  providers: [provideEchartsCore({ echarts })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard.component.html',
 })
@@ -113,81 +90,181 @@ export class DashboardComponent implements OnInit {
     this.themeService.isDark() ? 'dark' : 'light'
   );
 
-  pieChartOptions = computed<Partial<ChartOptions>>(() => ({
-    series: this.expensesByCategory().map((c) => c.total) as ApexNonAxisChartSeries,
-    labels: this.expensesByCategory().map((c) => c.name),
-    chart: {
-      type: 'donut',
-      height: 300,
-      background: 'transparent',
-      toolbar: { show: false },
-    },
-    legend: { position: 'bottom' },
-    theme: { mode: this.themeMode() },
-    responsive: [{ breakpoint: 480, options: { chart: { height: 250 } } }],
-    tooltip: { y: { formatter: (v: number) => `${v.toFixed(2)} €` } },
-    dataLabels: { enabled: false },
-    plotOptions: {},
-    xaxis: {},
-    colors: [],
-  }));
+  pieChartOptions = computed<EChartsOption>(() => {
+    const data = this.expensesByCategory().map((category) => ({
+      value: category.total,
+      name: category.name,
+      itemStyle: category.color ? { color: category.color } : undefined,
+    }));
+    const colors = this.expensesByCategory()
+      .map((category) => category.color)
+      .filter((color): color is string => !!color);
+    const borderColor = this.themeMode() === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.08)';
 
-  barChartOptions = computed<Partial<ChartOptions>>(() => {
+    return {
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} € ({d}%)',
+      },
+      legend: {
+        bottom: 0,
+        left: 'center',
+        textStyle: { color: 'var(--color-text)' },
+      },
+      series: [
+        {
+          name: 'Gastos',
+          type: 'pie',
+          radius: ['38%', '68%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 8,
+            borderColor,
+            borderWidth: 1,
+          },
+          label: {
+            show: false,
+            position: 'center',
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: 16,
+              fontWeight: 'bold',
+            },
+          },
+          labelLine: {
+            show: false,
+          },
+          data,
+        },
+      ],
+      color: colors.length ? colors : undefined,
+    };
+  });
+
+  barChartOptions = computed<EChartsOption>(() => {
     const summary = this.monthlySummary();
     const labels = summary.map((s) => {
       const [y, m] = s.month.split('-');
       return new Date(+y, +m - 1, 1).toLocaleDateString('es-ES', { month: 'short', year: '2-digit' });
     });
+    const isDark = this.themeMode() === 'dark';
+    const axisLineColor = isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(15, 23, 42, 0.12)';
+    const splitLineColor = isDark ? 'rgba(148, 163, 184, 0.18)' : 'rgba(15, 23, 42, 0.08)';
+    const labelColor = isDark ? 'rgba(226, 232, 240, 0.85)' : 'var(--color-text-muted)';
+
     return {
-      series: [
-        { name: 'Ingresos', data: summary.map((s) => s.income) },
-        { name: 'Gastos', data: summary.map((s) => s.expense) },
-      ] as ApexAxisChartSeries,
-      chart: {
-        type: 'bar',
-        height: 280,
-        background: 'transparent',
-        toolbar: { show: false },
-        stacked: false,
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow', label: { color: 'var(--color-text)' } },
+        formatter: (params: any) => {
+          const item = Array.isArray(params) ? params[0] : params;
+          return `${item.marker} ${item.seriesName}: ${item.value.toFixed(2)} €`;
+        },
       },
-      xaxis: { categories: labels },
-      colors: ['#22c55e', '#ef4444'],
-      legend: { position: 'top' },
-      theme: { mode: this.themeMode() },
-      tooltip: { y: { formatter: (v: number) => `${v.toFixed(2)} €` } },
-      plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
-      dataLabels: { enabled: false },
-      labels: [],
-      responsive: [],
+      legend: {
+        top: 0,
+        textStyle: { color: 'var(--color-text)' },
+      },
+      grid: {
+        left: '3%',
+        right: '3%',
+        bottom: '12%',
+        containLabel: true,
+      },
+      xAxis: [
+        {
+          type: 'category',
+          data: labels,
+          axisTick: { alignWithLabel: true, lineStyle: { color: axisLineColor } },
+          axisLine: { lineStyle: { color: axisLineColor } },
+          axisLabel: { color: labelColor },
+        },
+      ],
+      yAxis: [
+        {
+          type: 'value',
+          axisLine: { lineStyle: { color: axisLineColor } },
+          splitLine: { lineStyle: { color: splitLineColor } },
+          axisLabel: { color: labelColor },
+        },
+      ],
+      series: [
+        {
+          name: 'Ingresos',
+          type: 'bar',
+          barWidth: '32%',
+          data: summary.map((s) => s.income),
+          itemStyle: {
+            color: '#22c55e',
+            borderRadius: [6, 6, 0, 0],
+          },
+        },
+        {
+          name: 'Gastos',
+          type: 'bar',
+          barWidth: '32%',
+          data: summary.map((s) => s.expense),
+          itemStyle: {
+            color: '#ef4444',
+            borderRadius: [6, 6, 0, 0],
+          },
+        },
+      ],
     };
   });
 
-  balanceTrendOptions = computed<Partial<ChartOptions>>(() => {
+  balanceTrendOptions = computed<EChartsOption>(() => {
     const summary = this.monthlySummary();
     const labels = summary.map((s) => {
       const [y, m] = s.month.split('-');
       return new Date(+y, +m - 1, 1).toLocaleDateString('es-ES', { month: 'short' });
     });
+
     return {
-      series: [
-        { name: 'Balance', data: summary.map((s) => s.income - s.expense) },
-      ] as ApexAxisChartSeries,
-      chart: {
-        type: 'area',
-        height: 160,
-        background: 'transparent',
-        toolbar: { show: false },
-        sparkline: { enabled: true },
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        formatter: '{b}: {c} €',
       },
-      xaxis: { categories: labels },
-      colors: ['#3b82f6'],
-      theme: { mode: this.themeMode() },
-      tooltip: { y: { formatter: (v: number) => `${v.toFixed(2)} €` } },
-      dataLabels: { enabled: false },
-      plotOptions: {},
-      legend: {},
-      labels: [],
-      responsive: [],
+      grid: {
+        left: '0%',
+        right: '0%',
+        top: '10%',
+        bottom: '0%',
+        containLabel: true,
+      },
+      xAxis: [
+        {
+          type: 'category',
+          data: labels,
+          axisLine: { show: false },
+          axisTick: { show: false },
+          axisLabel: { color: 'var(--color-text-muted)' },
+        },
+      ],
+      yAxis: [
+        {
+          type: 'value',
+          axisLine: { show: false },
+          splitLine: { show: false },
+          axisLabel: { color: 'var(--color-text-muted)' },
+        },
+      ],
+      series: [
+        {
+          name: 'Balance',
+          type: 'line',
+          smooth: true,
+          showSymbol: false,
+          areaStyle: { color: 'rgba(59, 130, 246, 0.16)' },
+          lineStyle: { color: '#3b82f6', width: 3 },
+          data: summary.map((s) => s.income - s.expense),
+        },
+      ],
     };
   });
 
