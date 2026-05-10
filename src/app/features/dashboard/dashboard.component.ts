@@ -10,7 +10,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
 import * as echarts from 'echarts';
 import type { EChartsOption } from 'echarts';
-import { LucideAngularModule, Wallet, TrendingDown, TrendingUp, Scale, ChartPie, ArrowDownLeft, ArrowUpRight } from 'lucide-angular';
+import { LucideAngularModule, Wallet, TrendingDown, TrendingUp, Scale, ChartPie, ArrowDownLeft, ArrowUpRight, Plus } from 'lucide-angular';
 import { getCategoryIcon } from '@core/utils/category-icons';
 
 import { TransactionService } from '@core/services/transaction.service';
@@ -21,6 +21,7 @@ import { Budget } from '@core/models/budget.model';
 import { StatCardComponent } from '@shared/components/stat-card/stat-card.component';
 import { MonthPickerComponent } from '@shared/components/month-picker/month-picker.component';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
+import { TransactionFormComponent } from '@features/transactions/transaction-form/transaction-form.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,6 +32,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
     StatCardComponent,
     MonthPickerComponent,
     LoadingSpinnerComponent,
+    TransactionFormComponent,
     CurrencyPipe,
     DatePipe,
   ],
@@ -50,9 +52,11 @@ export class DashboardComponent implements OnInit {
   readonly ChartPie = ChartPie;
   readonly ArrowDownLeft = ArrowDownLeft;
   readonly ArrowUpRight = ArrowUpRight;
+  readonly Plus = Plus;
   readonly getCategoryIcon = getCategoryIcon;
 
   isLoading = signal(true);
+  showForm = signal(false);
   transactions = signal<Transaction[]>([]);
   budgets = signal<Budget[]>([]);
   monthlySummary = signal<{ month: string; income: number; expense: number }[]>([]);
@@ -267,6 +271,16 @@ export class DashboardComponent implements OnInit {
       ],
     };
   });
+
+  async onTransactionSaved() {
+    const month = this.selectedMonth();
+    const [txs, budgets] = await Promise.all([
+      this.transactionService.getTransactions(),
+      this.budgetService.getBudgetUsage(month),
+    ]);
+    this.transactions.set(txs);
+    this.budgets.set(budgets);
+  }
 
   async ngOnInit() {
     await this.loadData();

@@ -5,11 +5,23 @@
       <h1 class="text-2xl font-bold">Dashboard</h1>
       <p class="text-sm text-[var(--color-text-muted)] mt-0.5">Resumen de tus finanzas</p>
     </div>
-    <app-month-picker
-      [value]="selectedMonth()"
-      (valueChange)="onMonthChange($event)"
-    />
+    <div class="flex items-center gap-3">
+      <app-month-picker
+        [value]="selectedMonth()"
+        (valueChange)="onMonthChange($event)"
+      />
+      <button class="btn-primary btn-sm flex items-center gap-1.5" (click)="showForm.set(true)">
+        <lucide-angular [img]="Plus" class="w-4 h-4" />
+        Nuevo
+      </button>
+    </div>
   </div>
+
+  <app-transaction-form
+    [visible]="showForm()"
+    (close)="showForm.set(false)"
+    (saved)="onTransactionSaved()"
+  />
 
   @if (isLoading()) {
     <app-loading-spinner />
