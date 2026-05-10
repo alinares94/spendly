@@ -8,7 +8,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import {
   LucideAngularModule,
   Sun, Moon,
-  CheckCircle, CircleX,
+  CircleCheckBig, CircleX,
   User, Palette, Lock, Info, TriangleAlert, LogOut,
 } from 'lucide-angular';
 import { environment } from '@environments/environment';
@@ -25,7 +25,7 @@ import { ThemeService } from '@core/services/theme.service';
 export class SettingsComponent {
   readonly Sun = Sun;
   readonly Moon = Moon;
-  readonly CheckCircle = CheckCircle;
+  readonly CircleCheckBig = CircleCheckBig;
   readonly CircleX = CircleX;
   readonly User = User;
   readonly Palette = Palette;
