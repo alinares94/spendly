@@ -19,11 +19,12 @@ import { TransactionService } from '@core/services/transaction.service';
 import { CategoryService } from '@core/services/category.service';
 import { Transaction, TransactionType, CreateTransactionDto } from '@core/models/transaction.model';
 import { Category } from '@core/models/category.model';
+import { CategorySelectComponent } from '@shared/components/category-select/category-select.component';
 
 @Component({
   selector: 'app-transaction-form',
   standalone: true,
-  imports: [ReactiveFormsModule, LucideAngularModule],
+  imports: [ReactiveFormsModule, LucideAngularModule, CategorySelectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
@@ -110,12 +111,10 @@ import { Category } from '@core/models/category.model';
             <!-- Category -->
             <div class="form-field">
               <label class="form-label">Categoría</label>
-              <select class="input" formControlName="category_id">
-                <option value="">Sin categoría</option>
-                @for (cat of filteredCategories(); track cat.id) {
-                  <option [value]="cat.id">{{ cat.icon }} {{ cat.name }}</option>
-                }
-              </select>
+              <app-category-select
+                [categories]="filteredCategories()"
+                formControlName="category_id"
+              />
             </div>
 
             <!-- Date -->

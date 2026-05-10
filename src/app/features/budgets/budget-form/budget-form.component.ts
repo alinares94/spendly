@@ -14,11 +14,12 @@ import { BudgetService } from '@core/services/budget.service';
 import { CategoryService } from '@core/services/category.service';
 import { Budget, CreateBudgetDto } from '@core/models/budget.model';
 import { Category } from '@core/models/category.model';
+import { CategorySelectComponent } from '@shared/components/category-select/category-select.component';
 
 @Component({
   selector: 'app-budget-form',
   standalone: true,
-  imports: [ReactiveFormsModule, LucideAngularModule],
+  imports: [ReactiveFormsModule, LucideAngularModule, CategorySelectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
@@ -49,15 +50,11 @@ import { Category } from '@core/models/category.model';
 
               <div class="form-field">
                 <label class="form-label">Categoría</label>
-                <select class="input" formControlName="category_id"
-                  [class.input-error]="fieldInvalid('category_id')">
-                  <option value="">Selecciona una categoría</option>
-                  @for (cat of categories(); track cat.id) {
-                    @if (cat.type === 'expense') {
-                      <option [value]="cat.id">{{ cat.icon }} {{ cat.name }}</option>
-                    }
-                  }
-                </select>
+                <app-category-select
+                  [categories]="categories()"
+                  placeholder="Selecciona una categoría"
+                  formControlName="category_id"
+                />
                 @if (fieldInvalid('category_id')) {
                   <span class="form-error">Selecciona una categoría</span>
                 }
