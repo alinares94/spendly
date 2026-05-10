@@ -24,12 +24,14 @@
       <option value="expense">Gastos</option>
     </select>
 
-    <select class="input w-auto" (change)="onCategoryFilter($event)">
-      <option value="">Todas las categorías</option>
-      @for (cat of categories(); track cat.id) {
-        <option [value]="cat.id">{{ cat.name }}</option>
-      }
-    </select>
+    <div class="w-48">
+      <app-category-select
+        [categories]="categories()"
+        placeholder="Todas las categorías"
+        [(ngModel)]="categoryFilterId"
+        (ngModelChange)="onCategoryFilter($event)"
+      />
+    </div>
   </div>
 
   <!-- Summary bar -->

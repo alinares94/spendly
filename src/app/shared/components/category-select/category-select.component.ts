@@ -51,7 +51,7 @@ import { getCategoryIcon } from '@core/utils/category-icons';
 
       @if (isOpen()) {
         <div
-          class="absolute z-20 w-full mt-1 bg-[var(--color-surface)] border border-[var(--color-border)]
+          class="absolute z-20 w-full mt-1 bg-[var(--color-bg-card)] border border-[var(--color-border)]
                  rounded-lg shadow-lg max-h-52 overflow-y-auto"
         >
           <button

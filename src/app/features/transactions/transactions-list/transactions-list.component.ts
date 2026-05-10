@@ -13,7 +13,9 @@ import { TransactionService } from '@core/services/transaction.service';
 import { CategoryService } from '@core/services/category.service';
 import { Transaction, TransactionType } from '@core/models/transaction.model';
 import { Category } from '@core/models/category.model';
+import { FormsModule } from '@angular/forms';
 import { MonthPickerComponent } from '@shared/components/month-picker/month-picker.component';
+import { CategorySelectComponent } from '@shared/components/category-select/category-select.component';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { CategoryBadgeComponent } from '@shared/components/category-badge/category-badge.component';
@@ -24,7 +26,9 @@ import { TransactionFormComponent } from '../transaction-form/transaction-form.c
   selector: 'app-transactions-list',
   standalone: true,
   imports: [
+    FormsModule,
     MonthPickerComponent,
+    CategorySelectComponent,
     LoadingSpinnerComponent,
     EmptyStateComponent,
     CategoryBadgeComponent,
@@ -49,6 +53,8 @@ export class TransactionsListComponent implements OnInit {
 
   transactionService = inject(TransactionService);
   private categoryService = inject(CategoryService);
+
+  categoryFilterId = '';
 
   isLoading = signal(true);
   transactions = signal<Transaction[]>([]);
@@ -93,8 +99,7 @@ export class TransactionsListComponent implements OnInit {
     this.loadTransactions();
   }
 
-  onCategoryFilter(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
+  onCategoryFilter(value: string) {
     this.transactionService.selectedCategoryId.set(value || null);
     this.loadTransactions();
   }
