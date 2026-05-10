@@ -6,7 +6,10 @@
 
   <!-- Profile -->
   <div class="card-elevated">
-    <h2 class="card-title mb-4">Perfil</h2>
+    <h2 class="card-title mb-4 flex items-center gap-2">
+      <lucide-angular [img]="User" class="h-4 w-4" />
+      Perfil
+    </h2>
     <div class="flex items-center gap-4">
       <div class="w-16 h-16 rounded-full bg-[var(--color-primary)] flex items-center justify-center
                   text-white text-2xl font-bold flex-shrink-0">
@@ -21,7 +24,10 @@
 
   <!-- Appearance -->
   <div class="card-elevated">
-    <h2 class="card-title mb-4">Apariencia</h2>
+    <h2 class="card-title mb-4 flex items-center gap-2">
+      <lucide-angular [img]="Palette" class="h-4 w-4" />
+      Apariencia
+    </h2>
     <div class="flex items-center justify-between">
       <div>
         <p class="text-sm font-medium">Tema de la aplicación</p>
@@ -31,27 +37,38 @@
         </p>
       </div>
       <button
-        class="btn-secondary"
+        class="btn-secondary inline-flex items-center gap-2"
         (click)="themeService.toggle()"
       >
-        {{ themeService.isDark() ? '☀️ Cambiar a claro' : '🌙 Cambiar a oscuro' }}
+        @if (themeService.isDark()) {
+          <lucide-angular [img]="Sun" class="h-4 w-4" />
+          Cambiar a claro
+        } @else {
+          <lucide-angular [img]="Moon" class="h-4 w-4" />
+          Cambiar a oscuro
+        }
       </button>
     </div>
   </div>
 
   <!-- Change password -->
   <div class="card-elevated">
-    <h2 class="card-title mb-4">Cambiar contraseña</h2>
+    <h2 class="card-title mb-4 flex items-center gap-2">
+      <lucide-angular [img]="Lock" class="h-4 w-4" />
+      Cambiar contraseña
+    </h2>
 
     @if (successMessage()) {
       <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800
-                  text-green-700 dark:text-green-400 text-sm rounded-lg p-3 mb-4">
-        ✅ {{ successMessage() }}
+                  text-green-700 dark:text-green-400 text-sm rounded-lg p-3 mb-4 flex items-center gap-2">
+        <lucide-angular [img]="CheckCircle" class="h-4 w-4 flex-shrink-0" />
+        {{ successMessage() }}
       </div>
     }
     @if (errorMessage()) {
       <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800
-                  text-red-700 dark:text-red-400 text-sm rounded-lg p-3 mb-4">
+                  text-red-700 dark:text-red-400 text-sm rounded-lg p-3 mb-4 flex items-center gap-2">
+        <lucide-angular [img]="CircleX" class="h-4 w-4 flex-shrink-0" />
         {{ errorMessage() }}
       </div>
     }
@@ -89,9 +106,10 @@
       <div class="flex justify-end">
         <button
           type="submit"
-          class="btn-primary"
+          class="btn-primary inline-flex items-center gap-2"
           [disabled]="isLoading() || passwordForm.invalid"
         >
+          <lucide-angular [img]="Lock" class="h-4 w-4" />
           @if (isLoading()) { Guardando... }
           @else { Actualizar contraseña }
         </button>
@@ -101,7 +119,10 @@
 
   <!-- About -->
   <div class="card-elevated">
-    <h2 class="card-title mb-4">Acerca de</h2>
+    <h2 class="card-title mb-4 flex items-center gap-2">
+      <lucide-angular [img]="Info" class="h-4 w-4" />
+      Acerca de
+    </h2>
     <div class="flex items-center justify-between">
       <div>
         <p class="text-sm font-medium">Versión de la aplicación</p>
@@ -116,13 +137,19 @@
 
   <!-- Danger zone -->
   <div class="card border-[var(--color-danger)]">
-    <h2 class="card-title text-[var(--color-danger)] mb-4">Zona de peligro</h2>
+    <h2 class="card-title text-[var(--color-danger)] mb-4 flex items-center gap-2">
+      <lucide-angular [img]="TriangleAlert" class="h-4 w-4" />
+      Zona de peligro
+    </h2>
     <div class="flex items-center justify-between">
       <div>
         <p class="text-sm font-medium">Cerrar sesión</p>
         <p class="text-xs text-[var(--color-text-muted)] mt-0.5">Cierra tu sesión en este dispositivo</p>
       </div>
-      <button class="btn-danger" (click)="onSignOut()">Cerrar sesión</button>
+      <button class="btn-danger inline-flex items-center gap-2" (click)="onSignOut()">
+        <lucide-angular [img]="LogOut" class="h-4 w-4" />
+        Cerrar sesión
+      </button>
     </div>
   </div>
 </div>
