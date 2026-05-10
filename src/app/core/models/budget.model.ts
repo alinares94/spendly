@@ -6,6 +6,7 @@ export interface Budget {
   month: string;
   category_id: string | null;
   limit_amount: number;
+  auto_renew: boolean;
   created_at: string;
   category?: Category;
   spent_amount?: number;
@@ -16,4 +17,5 @@ export interface CreateBudgetDto {
   month: string;
   category_id: string;
   limit_amount: number;
+  auto_renew: boolean;
 }

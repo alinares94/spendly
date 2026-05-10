@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
-import { LucideAngularModule, Target, TriangleAlert, Plus, X } from 'lucide-angular';
+import { LucideAngularModule, Target, TriangleAlert, Plus, X, RefreshCw } from 'lucide-angular';
 import { getCategoryIcon } from '@core/utils/category-icons';
 import { BudgetService } from '@core/services/budget.service';
 import { Budget } from '@core/models/budget.model';
@@ -36,6 +36,7 @@ export class BudgetsListComponent implements OnInit {
   readonly TriangleAlert = TriangleAlert;
   readonly Plus = Plus;
   readonly X = X;
+  readonly RefreshCw = RefreshCw;
   readonly getCategoryIcon = getCategoryIcon;
 
   private budgetService = inject(BudgetService);

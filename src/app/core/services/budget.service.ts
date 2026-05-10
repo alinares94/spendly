@@ -71,10 +71,10 @@ export class BudgetService {
     return data as Budget;
   }
 
-  async updateBudget(id: string, limit_amount: number): Promise<Budget> {
+  async updateBudget(id: string, updates: { limit_amount?: number; auto_renew?: boolean }): Promise<Budget> {
     const { data, error } = await this.supabase.client
       .from('budgets')
-      .update({ limit_amount })
+      .update(updates)
       .eq('id', id)
       .select('*, category:categories(*)')
       .single();
@@ -88,5 +88,52 @@ export class BudgetService {
       .delete()
       .eq('id', id);
     if (error) throw error;
+  }
+
+  async processBudgets(): Promise<void> {
+    const { data: { user } } = await this.supabase.client.auth.getUser();
+    if (!user) return;
+
+    const now = new Date();
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+
+    // Categorías que ya tienen presupuesto este mes
+    const { data: existing } = await this.supabase.client
+      .from('budgets')
+      .select('category_id')
+      .eq('user_id', user.id)
+      .eq('month', currentMonth);
+
+    const existingCategories = new Set((existing ?? []).map((b: { category_id: string }) => b.category_id));
+
+    // Presupuestos auto_renew de meses anteriores, ordenados por mes desc
+    const { data: templates } = await this.supabase.client
+      .from('budgets')
+      .select('category_id, limit_amount')
+      .eq('user_id', user.id)
+      .eq('auto_renew', true)
+      .lt('month', currentMonth)
+      .order('month', { ascending: false });
+
+    if (!templates?.length) return;
+
+    // El más reciente por categoría
+    const latestByCategory = new Map<string, number>();
+    for (const t of templates as { category_id: string; limit_amount: number }[]) {
+      if (!latestByCategory.has(t.category_id)) {
+        latestByCategory.set(t.category_id, t.limit_amount);
+      }
+    }
+
+    const toInsert = [];
+    for (const [category_id, limit_amount] of latestByCategory) {
+      if (!existingCategories.has(category_id)) {
+        toInsert.push({ user_id: user.id, category_id, limit_amount, month: currentMonth, auto_renew: true });
+      }
+    }
+
+    if (toInsert.length) {
+      await this.supabase.client.from('budgets').insert(toInsert);
+    }
   }
 }

@@ -35,6 +35,9 @@
                 />
               }
               <span class="font-semibold">{{ b.category?.name ?? 'Sin categoría' }}</span>
+              @if (b.auto_renew) {
+                <lucide-angular [img]="RefreshCw" class="w-3.5 h-3.5 text-[var(--color-primary)] opacity-70" title="Renovación automática" />
+              }
             </div>
             <span
               class="text-sm font-bold tabular-nums"
