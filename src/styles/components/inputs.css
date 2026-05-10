@@ -25,13 +25,6 @@
     @apply resize-y min-h-[80px];
   }
 
-  /* iOS auto-zoom fix: font-size < 16px triggers zoom on focus */
-  @media screen and (max-width: 768px) {
-    .input {
-      font-size: 16px;
-    }
-  }
-
   .input-group {
     @apply relative;
   }

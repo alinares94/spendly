@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule, Sun, Moon, CheckCircle } from 'lucide-angular';
+import { environment } from '@environments/environment';
 import { AuthService } from '@core/services/auth.service';
 import { SupabaseService } from '@core/services/supabase.service';
 import { ThemeService } from '@core/services/theme.service';
@@ -20,6 +21,7 @@ export class SettingsComponent {
   readonly Sun = Sun;
   readonly Moon = Moon;
   readonly CheckCircle = CheckCircle;
+  readonly appVersion = environment.appVersion;
 
   private auth = inject(AuthService);
   private supabase = inject(SupabaseService);
