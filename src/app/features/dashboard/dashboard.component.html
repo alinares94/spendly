@@ -47,6 +47,60 @@
         [colorType]="balance() >= 0 ? 'income' : 'expense'"
       />
     </div>
+    
+    <!-- Presupuestos del mes -->
+    @if (budgets().length > 0) {
+      <div class="card-elevated">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Presupuestos</h2>
+            <p class="card-subtitle">Progreso del mes actual</p>
+          </div>
+          <a href="/budgets" class="btn-ghost btn-sm text-xs">Ver todos →</a>
+        </div>
+        <div class="space-y-4">
+          @for (budget of budgets(); track budget.id) {
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-sm">
+                <div class="flex items-center gap-2">
+                  @if (getCategoryIcon(budget.category?.icon)) {
+                    <lucide-angular
+                      [img]="getCategoryIcon(budget.category?.icon)!"
+                      class="w-4 h-4"
+                    />
+                  }
+                  <span class="font-medium">{{ budget.category?.name ?? 'Sin categoría' }}</span>
+                </div>
+                <span class="text-[var(--color-text-muted)]">
+                  {{ budget.spent_amount! | currency:'EUR':'symbol':'1.2-2':'es' }}
+                  /
+                  {{ budget.limit_amount | currency:'EUR':'symbol':'1.2-2':'es' }}
+                </span>
+              </div>
+              <div class="progress-bar-track">
+                <div
+                  class="progress-bar-fill"
+                  [class.progress-bar-ok]="budget.usage_percentage! <= 70"
+                  [class.progress-bar-warning]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
+                  [class.progress-bar-danger]="budget.usage_percentage! > 90"
+                  [style.width.%]="budget.usage_percentage"
+                ></div>
+              </div>
+              <div class="flex justify-end">
+                <span
+                  class="text-xs"
+                  [class.text-[var(--color-text-muted)]]="budget.usage_percentage! <= 70"
+                  [class.text-[var(--color-warning)]]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
+                  [class.text-[var(--color-danger)]]="budget.usage_percentage! > 90"
+                >
+                  {{ budget.usage_percentage }}%
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
 
     <!-- Últimos movimientos -->
     <div class="card-elevated">
@@ -128,58 +182,5 @@
       </div>
     </div>
 
-    <!-- Presupuestos del mes -->
-    @if (budgets().length > 0) {
-      <div class="card-elevated">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">Presupuestos</h2>
-            <p class="card-subtitle">Progreso del mes actual</p>
-          </div>
-          <a href="/budgets" class="btn-ghost btn-sm text-xs">Ver todos →</a>
-        </div>
-        <div class="space-y-4">
-          @for (budget of budgets(); track budget.id) {
-            <div class="space-y-1.5">
-              <div class="flex justify-between text-sm">
-                <div class="flex items-center gap-2">
-                  @if (getCategoryIcon(budget.category?.icon)) {
-                    <lucide-angular
-                      [img]="getCategoryIcon(budget.category?.icon)!"
-                      class="w-4 h-4"
-                    />
-                  }
-                  <span class="font-medium">{{ budget.category?.name ?? 'Sin categoría' }}</span>
-                </div>
-                <span class="text-[var(--color-text-muted)]">
-                  {{ budget.spent_amount! | currency:'EUR':'symbol':'1.2-2':'es' }}
-                  /
-                  {{ budget.limit_amount | currency:'EUR':'symbol':'1.2-2':'es' }}
-                </span>
-              </div>
-              <div class="progress-bar-track">
-                <div
-                  class="progress-bar-fill"
-                  [class.progress-bar-ok]="budget.usage_percentage! <= 70"
-                  [class.progress-bar-warning]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
-                  [class.progress-bar-danger]="budget.usage_percentage! > 90"
-                  [style.width.%]="budget.usage_percentage"
-                ></div>
-              </div>
-              <div class="flex justify-end">
-                <span
-                  class="text-xs"
-                  [class.text-[var(--color-text-muted)]]="budget.usage_percentage! <= 70"
-                  [class.text-[var(--color-warning)]]="budget.usage_percentage! > 70 && budget.usage_percentage! <= 90"
-                  [class.text-[var(--color-danger)]]="budget.usage_percentage! > 90"
-                >
-                  {{ budget.usage_percentage }}%
-                </span>
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-    }
   }
 </div>
